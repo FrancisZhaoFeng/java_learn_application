@@ -7,21 +7,24 @@ import java.util.List;
 public class WriteToFile {
 
 	public static void writeToText(List<ApkName> apkName) {
-		String installSuccess = "c:\\installSuccess.txt";
-		String installFail = "c:\\installFail.txt";
-		String odFail = "c:\\odFail.txt";
+		String installSuccess = "c:\\w_installSuccess.txt";
+		String installFail = "c:\\w_installFail.txt";
+		String openFail = "c:\\w_openFail.txt";
+		String downloadFail = "c:\\w_downloadFail.txt";
 		FileOutputStream fosSussess;
 		FileOutputStream fosFail;
-		FileOutputStream fosODFail;
+		FileOutputStream fosOpenFail;
+		FileOutputStream fosDownloadFail;
 		int[] apkSize = new int[99999999];
 		int maxIndex = 0, minIndex = 99999999;
 		try {
 			fosSussess = new FileOutputStream(installSuccess);
 			fosFail = new FileOutputStream(installFail);
-			fosODFail = new FileOutputStream(odFail);
+			fosOpenFail = new FileOutputStream(openFail);
+			fosDownloadFail = new FileOutputStream(downloadFail);
 			for (ApkName an : apkName) {
 				String name = an.getName();
-				if (maxIndex < an.getSn())  
+				if (maxIndex < an.getSn())
 					maxIndex = an.getSn();
 				if (minIndex > an.getSn())
 					minIndex = an.getSn();
@@ -46,22 +49,24 @@ public class WriteToFile {
 					} else {
 						apkPName = name.substring(index, name.indexOf("安装")) + "\r\n";
 					}
-					fosODFail.write(apkPName.getBytes());
+					fosOpenFail.write(apkPName.getBytes());
 				}
 			}
 			for (int i = minIndex; i <= maxIndex; i++) {
 				if (apkSize[i] == 0) {
-					String sn = "" + i + "_\r\n";
-					fosODFail.write(sn.getBytes());
+					String sn = "" + i + "\r\n";
+					fosDownloadFail.write(sn.getBytes());
 				}
 			}
-			System.out.println(maxIndex);
+			System.out.println("最小值："+minIndex + "\n最大值：" + maxIndex);
 			fosSussess.flush();
 			fosSussess.close();
 			fosFail.flush();
 			fosFail.close();
-			fosODFail.flush();
-			fosODFail.close();
+			fosOpenFail.flush();
+			fosOpenFail.close();
+			fosDownloadFail.flush();
+			fosDownloadFail.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

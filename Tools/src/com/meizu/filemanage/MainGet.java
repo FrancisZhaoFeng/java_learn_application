@@ -42,12 +42,12 @@ public class MainGet {
 
 	public static void main(String[] args) {
 		String filePath = "e:/temp/";
-		List<String> lFileName = new ArrayList<String>();
+		List<ApkName> lFileName = new ArrayList<ApkName>();
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		// 显示文件内容
 		ReadFromFile.getFileList(filePath, lFileName, ".txt");
-		for (String strFileName : lFileName) {
-			ReadFromFile.readFileByLines(filePath + strFileName, apkName);
+		for (ApkName strFileName : lFileName) {
+			ReadFromFile.readFileByLines(filePath + strFileName.getName(), apkName);
 		}
 		Collections.sort(apkName);
 		WriteToFile.writeToText(apkName);

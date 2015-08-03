@@ -15,14 +15,22 @@ import java.util.regex.Pattern;
 
 public class ReadFromFile {
 
-	public static void getFileList(String baseFilePath, List<String> listApkFName, String keyword) {
+	public static void getFileList(String baseFilePath, List<ApkName> listApkFName, String keyword) {
 		File file = new File(baseFilePath);
 		File[] filesName = file.listFiles();
 		if (filesName != null && file.exists()) {
 			for (File fileName : filesName) {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword)) {
-					listApkFName.add(strName);
+					ApkName an = new ApkName();
+					an.setName(strName);
+					if(strName.indexOf("_") != -1){
+						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
+					}else{
+						an.setSn(0);
+					}
+					
+					listApkFName.add(an);
 				}
 			}
 		}
@@ -148,9 +156,13 @@ public class ReadFromFile {
 					Matcher matcher = pattern.matcher(tempString);
 					if (matcher.find())
 						indexNum = tempString.indexOf(matcher.group());
-					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {
+					if (indexNum != -1 ) {//	&& (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)
 						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
-						an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
+						if((index_ = tempString.indexOf("_")) != -1){
+							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
+						}else{
+							an.setSn(Integer.parseInt(tempString.substring(indexNum, tempString.length())));
+						}
 						an.setName(tempString.substring(indexNum, tempString.length()));
 						apkName.add(an);
 					}
