@@ -1,9 +1,9 @@
 package com.meizu.filemanage;
 
 public class ApkName implements Comparable<ApkName> {
-	private Integer sn ;
+	private Integer sn;
 	private String name;
-	
+
 	public Integer getSn() {
 		return sn;
 	}
@@ -25,5 +25,5 @@ public class ApkName implements Comparable<ApkName> {
 		// TODO Auto-generated method stub
 		return this.getSn().compareTo(arg0.getSn());
 	}
-	
+
 }

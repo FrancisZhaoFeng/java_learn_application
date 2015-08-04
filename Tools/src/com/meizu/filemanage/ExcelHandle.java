@@ -203,6 +203,7 @@ public class ExcelHandle
 			wwb.write();
 			wwb.close();
 			rwb.close();
+			System.out.println("成功生成excel文件：" + writeFile);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -211,20 +212,17 @@ public class ExcelHandle
 	}
 
 	public static void main(String args[]) {
-		String downloadFailPath = "e:/w_downloadFailAPK";
-		String installFailPath = "e:/w_installFailAPK";
-		String openFailPath = "e:/w_openFailAPK";
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		List<ApkName> openFailName = new ArrayList<ApkName>();
 		List<ApkName> installFailName = new ArrayList<ApkName>();
 
-		ReadFromFile.getFileList(downloadFailPath, downloadFailName, ".apk");
-		ReadFromFile.getFileList(installFailPath, openFailName, ".apk");
-		ReadFromFile.getFileList(openFailPath, installFailName, ".apk");
+		ReadFromFile.getFileList(Constant.fold_downloadFail, downloadFailName, ".apk");
+		ReadFromFile.getFileList(Constant.fold_openFail, openFailName, ".apk");
+		ReadFromFile.getFileList(Constant.fold_installFail, installFailName, ".apk");
 
-		ExcelHandle.copyExecl("e:\\topapps1.xls", "e:\\w_downloadFailAPK.xls", downloadFailName);
-		ExcelHandle.copyExecl("e:\\topapps1.xls", "e:\\w_openFailAPK.xls", openFailName);
-		ExcelHandle.copyExecl("e:\\topapps1.xls", "e:\\w_installFailAPK.xls", installFailName);
+		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_downloadFail, downloadFailName);
+		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_openFail, openFailName);
+		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_installFail, installFailName);
 	}
 }

@@ -24,12 +24,12 @@ public class ReadFromFile {
 				if (strName.trim().endsWith(keyword)) {
 					ApkName an = new ApkName();
 					an.setName(strName);
-					if(strName.indexOf("_") != -1){
+					if (strName.indexOf("_") != -1) {
 						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
-					}else{
+					} else {
 						an.setSn(0);
 					}
-					
+
 					listApkFName.add(an);
 				}
 			}
@@ -156,13 +156,9 @@ public class ReadFromFile {
 					Matcher matcher = pattern.matcher(tempString);
 					if (matcher.find())
 						indexNum = tempString.indexOf(matcher.group());
-					if (indexNum != -1 ) {//	&& (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)
+					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {//
 						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
-						if((index_ = tempString.indexOf("_")) != -1){
-							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
-						}else{
-							an.setSn(Integer.parseInt(tempString.substring(indexNum, tempString.length())));
-						}
+						an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
 						an.setName(tempString.substring(indexNum, tempString.length()));
 						apkName.add(an);
 					}

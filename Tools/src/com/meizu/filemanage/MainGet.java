@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.meizu.tools.Tools;
+
 public class MainGet {
 	/**
 	 * A方法追加文件：使用RandomAccessFile
@@ -41,13 +43,13 @@ public class MainGet {
 	}
 
 	public static void main(String[] args) {
-		String filePath = "e:/temp/";
+		Tools.gAllFold();
 		List<ApkName> lFileName = new ArrayList<ApkName>();
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		// 显示文件内容
-		ReadFromFile.getFileList(filePath, lFileName, ".txt");
+		ReadFromFile.getFileList(Constant.fold_MeizuAutoTest, lFileName, ".txt");
 		for (ApkName strFileName : lFileName) {
-			ReadFromFile.readFileByLines(filePath + strFileName.getName(), apkName);
+			ReadFromFile.readFileByLines(Constant.fold_MeizuAutoTest + strFileName.getName(), apkName);
 		}
 		Collections.sort(apkName);
 		WriteToFile.writeToText(apkName);
