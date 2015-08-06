@@ -2,25 +2,29 @@ package com.meizu.filemanage;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.meizu.tools.Tools;
 
 public class WriteToFile {
 
 	public static void writeToText(List<ApkName> apkName) {
-		Tools.generateFold(Constant.fold_TextExcel);
 		FileOutputStream fosInstallSussess;
 		FileOutputStream fosInstallFail;
 		FileOutputStream fosOpenFail;
 		FileOutputStream fosDownloadFail;
+		FileOutputStream fosInexitApk = null;
 		int[] apkSize = new int[99999999];
 		int maxIndex = 0, minIndex = 99999999;
+		// 定义list：服务器文件名；下载失败文件名；
+		List<ApkName> lFileName = new ArrayList<ApkName>();
+		List<ApkName> downloadFailName = new ArrayList<ApkName>();
+		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
 		try {
 			fosInstallSussess = new FileOutputStream(Constant.txt_installSuccess);
 			fosInstallFail = new FileOutputStream(Constant.txt_installFail);
 			fosOpenFail = new FileOutputStream(Constant.txt_openFail);
 			fosDownloadFail = new FileOutputStream(Constant.txt_downloadFail);
+			fosInexitApk = new FileOutputStream(Constant.txt_inexitApk);
 			for (ApkName an : apkName) {
 				String name = an.getName();
 				if (maxIndex < an.getSn())
@@ -51,13 +55,27 @@ public class WriteToFile {
 					fosOpenFail.write(apkPName.getBytes());
 				}
 			}
+			// 将下载失败的与服务器上的apk对比，并已apk名称形式保存
 			for (int i = minIndex; i <= maxIndex; i++) {
+				boolean flag = false;
 				if (apkSize[i] == 0) {
-					String sn = "" + i + "_\r\n";
-					fosDownloadFail.write(sn.getBytes());
+					// 赋值给downloadFailName中的name值（文件名）
+					for (ApkName an : lFileName) {
+						String lFile = an.getName();
+						if (an.getSn() == i) {
+							System.out.println(lFile);
+							fosDownloadFail.write((an.getName() + "\r\n").getBytes());
+							downloadFailName.add(an);
+							flag = true;
+							break;
+						}
+					}
+					if (!flag)
+						fosInexitApk.write(("" + i + "\r\n").getBytes());
 				}
 			}
-			System.out.println("最小值：" + minIndex + "\n最大值：" + maxIndex);
+			fosInstallSussess.write(("最小值：" + minIndex + "\n最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex)).getBytes());
+			System.out.println("最小值：" + minIndex + "\n最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex));
 			fosInstallSussess.flush();
 			fosInstallSussess.close();
 			fosInstallFail.flush();

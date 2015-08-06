@@ -29,7 +29,6 @@ public class ReadFromFile {
 					} else {
 						an.setSn(0);
 					}
-
 					listApkFName.add(an);
 				}
 			}

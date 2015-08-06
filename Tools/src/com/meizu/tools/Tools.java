@@ -6,10 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.meizu.filemanage.Constant;
+import com.meizu.filemanage.ExcelHandle;
 
 public class Tools {
 	public static void main(String[] args) {
 		Tools.gAllFold();
+		// ExcelHandle.genIDByExcel(Constant.excel_topapps, "E:\\3W_Apps\\2015-08-05\\fold_TextExcel\\badPName.txt", 14011, 17541);
 	}
 
 	public static String getDate() {

@@ -1,9 +1,10 @@
 package com.meizu.filemanage;
 
 //in ExcelHandle   
-
+//参考：
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -193,7 +194,7 @@ public class ExcelHandle
 				for (int j = 0; j < cell.length + 1; j++) {
 					if (j == 0) {
 						ws.addCell(new Number(j, i, an.getSn()));
-					} else if (j == 1 || j == 2) {// || j==5 || j==6
+					} else if (j == 1 || j == 2) {
 						ws.addCell(new Number(j, i, Integer.parseInt(cell[j - 1].getContents())));
 					} else {
 						ws.addCell(new Label(j, i, cell[j - 1].getContents()));
@@ -208,21 +209,51 @@ public class ExcelHandle
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
-	public static void main(String args[]) {
+	public static void copyExcel() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		List<ApkName> openFailName = new ArrayList<ApkName>();
 		List<ApkName> installFailName = new ArrayList<ApkName>();
-
+		// 根据文件夹中的app获取apk名称
 		ReadFromFile.getFileList(Constant.fold_downloadFail, downloadFailName, ".apk");
 		ReadFromFile.getFileList(Constant.fold_openFail, openFailName, ".apk");
 		ReadFromFile.getFileList(Constant.fold_installFail, installFailName, ".apk");
-
+		// 根据apk名称重excel表中提取对应的行
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_downloadFail, downloadFailName);
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_openFail, openFailName);
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_installFail, installFailName);
 	}
+
+	public static void genIDByExcel(String readExcel, String readText, int minIndex, int maxIndex) {
+		InputStream is;
+		List<ApkName> lApkName = new ArrayList<ApkName>();
+		ReadFromFile.readFileByLines(readText, lApkName);
+		try {
+			is = new FileInputStream(readExcel);
+			Workbook rwb = Workbook.getWorkbook(is);
+			Sheet st = rwb.getSheet(0);
+			String pName = "";
+			for (ApkName an : lApkName) {
+				pName = an.getName().substring(an.getName().indexOf("_") + 1, an.getName().indexOf(".apk"));
+				for (int i = minIndex; i <= maxIndex; i++) {
+					Cell[] cell = st.getRow(i);
+					if (cell[3].getContents().equals(pName)) {
+						System.out.println(cell[2].getContents()+":"+an.getName());
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void main(String args[]) {
+		// ExcelHandle.copyExcel();
+		
+	}
+
 }

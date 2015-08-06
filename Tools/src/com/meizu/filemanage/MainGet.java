@@ -53,5 +53,7 @@ public class MainGet {
 		}
 		Collections.sort(apkName);
 		WriteToFile.writeToText(apkName);
+		// CopyFile.copyFile();
+		// ExcelHandle.copyExcel();
 	}
 }
