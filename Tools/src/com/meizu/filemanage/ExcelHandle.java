@@ -4,7 +4,6 @@ package com.meizu.filemanage;
 //参考：
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -211,22 +210,34 @@ public class ExcelHandle
 		}
 	}
 
-	public static void copyExcel() {
+	public static void copyExcelFristRun() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		List<ApkName> openFailName = new ArrayList<ApkName>();
 		List<ApkName> installFailName = new ArrayList<ApkName>();
 		// 根据文件夹中的app获取apk名称
-		ReadFromFile.getFileList(Constant.fold_downloadFail, downloadFailName, ".apk");
-		ReadFromFile.getFileList(Constant.fold_openFail, openFailName, ".apk");
-		ReadFromFile.getFileList(Constant.fold_installFail, installFailName, ".apk");
+		// ReadFromFile.getFileList(Constant.fold_downloadFail, downloadFailName, ".apk");
+		// ReadFromFile.getFileList(Constant.fold_openFail, openFailName, ".apk");
+		// ReadFromFile.getFileList(Constant.fold_installFail, installFailName, ".apk");
+		ReadFromFile.readFileByLines(Constant.txt_downloadFail, downloadFailName);
+		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
+		ReadFromFile.readFileByLines(Constant.txt_installFail, installFailName);
 		// 根据apk名称重excel表中提取对应的行
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_downloadFail, downloadFailName);
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_openFail, openFailName);
 		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_installFail, installFailName);
 	}
 
-	public static void genIDByExcel(String readExcel, String readText, int minIndex, int maxIndex) {
+	public static void copyExcelSecondRun() {
+		// 定义list：解析失败
+		List<ApkName> packageError = new ArrayList<ApkName>();
+		// 根据文件夹中的app获取apk名称
+		ReadFromFile.readFileByLines(Constant.txt_srPackageError, packageError);
+		// 根据apk名称重excel表中提取对应的行
+		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_srPackageError, packageError);
+	}
+
+	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		InputStream is;
 		List<ApkName> lApkName = new ArrayList<ApkName>();
 		ReadFromFile.readFileByLines(readText, lApkName);
@@ -234,13 +245,17 @@ public class ExcelHandle
 			is = new FileInputStream(readExcel);
 			Workbook rwb = Workbook.getWorkbook(is);
 			Sheet st = rwb.getSheet(0);
+			if(readText.contains("install"))
+				System.out.println("安装失败：");
+			else
+				System.out.println("打开失败：");
 			String pName = "";
 			for (ApkName an : lApkName) {
 				pName = an.getName().substring(an.getName().indexOf("_") + 1, an.getName().indexOf(".apk"));
 				for (int i = minIndex; i <= maxIndex; i++) {
 					Cell[] cell = st.getRow(i);
 					if (cell[3].getContents().equals(pName)) {
-						System.out.println(cell[2].getContents()+":"+an.getName());
+						System.out.println(cell[2].getContents());
 					}
 				}
 			}
@@ -251,9 +266,19 @@ public class ExcelHandle
 
 	}
 
+	public static void copyExcel(int num) {
+		if (num == 1)
+			ExcelHandle.copyExcelFristRun();
+		else{
+			ExcelHandle.copyExcelSecondRun();
+		}
+			
+	}
+
 	public static void main(String args[]) {
-		// ExcelHandle.copyExcel();
-		
+		// ExcelHandle.copyExcelFristRun();
+		// ExcelHandle.copyExcelSecondRun();
+		ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
 	}
 
 }

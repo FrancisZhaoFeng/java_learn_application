@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.meizu.filemanage.Constant;
-import com.meizu.filemanage.ExcelHandle;
 
 public class Tools {
 	public static void main(String[] args) {
@@ -18,7 +17,7 @@ public class Tools {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		String date = df.format(new Date());
 		System.out.println(date);// new Date()为获取当前系统时间
-		return date;
+		return "three";
 	}
 
 	public static void gAllFold() {
@@ -31,6 +30,10 @@ public class Tools {
 		Tools.generateFold(Constant.excel_downloadFail);
 		Tools.generateFold(Constant.excel_installFail);
 		Tools.generateFold(Constant.excel_openFail);
+		// 二轮测试
+		Tools.generateFold(Constant.fold_secondRun);
+		Tools.generateFold(Constant.fold_srMeizuAutoTest);
+		Tools.generateFold(Constant.excel_srPackageError);
 	}
 
 	public static void generateFold(String filePath) {

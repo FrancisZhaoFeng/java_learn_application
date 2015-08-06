@@ -22,4 +22,12 @@ public class Constant {
 	public static final String excel_openFail = fold_TextExcel + "excel_openFail.xls";
 	public static final String excel_downloadFail = fold_TextExcel + "excel_downloadFail.xls";
 	public static final String excel_topapps = "E:\\3W_Apps\\topapps.xls";
+	//二轮测试
+	public static final String fold_secondRun = localPath + "fold_secondRun\\";
+	public static final String fold_srMeizuAutoTest = fold_secondRun + "fold_srMeizuAutoTest\\";
+	public static final String txt_srPackageError = fold_secondRun + "txt_srPackageError.txt";
+	public static final String txt_srInstallFail = fold_secondRun + "txt_srInstallFail.txt";
+	public static final String txt_srOpenFail = fold_secondRun + "txt_srOpenFail.txt";
+	public static final String excel_srPackageError = fold_secondRun + "excel_srPackageError.xls";
+	
 }
