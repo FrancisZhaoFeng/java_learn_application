@@ -78,7 +78,7 @@ public class WriteToFile {
 						}
 					}
 					if (!flag)
-						fosInexitApk.write(("" + i + "\r\n").getBytes());
+						fosInexitApk.write(("" + i + "_\r\n").getBytes());
 				}
 			}
 			fosInstallSussess.write(("最小值：" + minIndex + "\n最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex)).getBytes());

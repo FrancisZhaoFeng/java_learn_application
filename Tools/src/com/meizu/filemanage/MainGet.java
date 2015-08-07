@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.meizu.tools.Tools;
-
 public class MainGet {
 	/**
 	 * A方法追加文件：使用RandomAccessFile
