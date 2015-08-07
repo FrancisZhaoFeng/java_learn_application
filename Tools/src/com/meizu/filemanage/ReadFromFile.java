@@ -3,6 +3,8 @@ package com.meizu.filemanage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,15 +153,18 @@ public class ReadFromFile {
 				// 显示行号
 				if (!tempString.contains("Crash") && !tempString.contains("20150730040414") && !tempString.contains("NotRespond")) {
 					int indexNum = 0, index_ = 0;
-					Pattern pattern = Pattern.compile("[0-9]");
-					Matcher matcher = pattern.matcher(tempString);
+					Pattern patternFristChar = Pattern.compile("[0-9]");
+					Pattern patternLetter = Pattern.compile("[A-Z]");
+					Matcher matcher = patternFristChar.matcher(tempString);
 					if (matcher.find())
 						indexNum = tempString.indexOf(matcher.group());
 					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {//
 						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
-						an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
-						an.setName(tempString.substring(indexNum, tempString.length()));
-						apkName.add(an);
+						if (!patternLetter.matcher(tempString.substring(indexNum, index_)).find()) {
+							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
+							an.setName(tempString.substring(indexNum, tempString.length()));
+							apkName.add(an);
+						}
 					}
 
 				}
@@ -218,6 +223,21 @@ public class ReadFromFile {
 		try {
 			System.out.println("当前字节输入流中的字节数为:" + in.available());
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeFileByLines(String writeFile,List<ApkName> apkName){
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(writeFile);
+			for(ApkName an :apkName){
+				fos.write((an.getName()+"\r\n").getBytes());
+			}
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

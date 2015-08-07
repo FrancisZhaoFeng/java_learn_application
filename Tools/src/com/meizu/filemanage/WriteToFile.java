@@ -35,10 +35,14 @@ public class WriteToFile {
 			fosInexitApk = new FileOutputStream(Constant.txt_inexitApk);
 			for (ApkName an : apkName) {
 				String name = an.getName();
-				if (maxIndex < an.getSn())
+				if (maxIndex < an.getSn()) {
+					System.out.println("最大apk记录：" + an.getName());
 					maxIndex = an.getSn();
-				if (minIndex > an.getSn())
+				}
+				if (minIndex > an.getSn()) {
+					System.out.println("最小apk记录：" + an.getName());
 					minIndex = an.getSn();
+				}
 				apkSize[an.getSn()] = 1;
 				name += "\r\n";
 				if (!name.contains("AppTestCase")) {
@@ -151,5 +155,31 @@ public class WriteToFile {
 			e.printStackTrace();
 		}
 		return "" + minIndex + "_" + maxIndex;
+	}
+
+	public static void serverFindInexid() {
+		List<ApkName> apkName = new ArrayList<ApkName>();
+		List<ApkName> inexitName = new ArrayList<ApkName>();
+		ReadFromFile.getFileList(Constant.serverPath, apkName, "apk");
+		int maxIndex = 0;
+		int[] lApk = new int[9999999];
+		for (ApkName an : apkName) {
+			lApk[an.getSn()] = 1;
+			if (maxIndex < an.getSn())
+				maxIndex = an.getSn();
+		}
+		for (int i = 1; i <= maxIndex; i++) {
+			if (lApk[i] == 0) {
+				ApkName an = new ApkName();
+				an.setName(i + "_");
+				inexitName.add(an);
+			}
+		}
+		ReadFromFile.writeFileByLines("d:\\temp.txt", inexitName);
+		System.out.print("以获取服务器不存在的id");
+	}
+
+	public static void main(String[] args) {
+		WriteToFile.serverFindInexid();
 	}
 }
