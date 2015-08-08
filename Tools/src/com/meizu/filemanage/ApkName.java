@@ -3,7 +3,6 @@ package com.meizu.filemanage;
 public class ApkName implements Comparable<ApkName> {
 	private Integer sn;
 	private String name;
-	private String bb;
 
 	public Integer getSn() {
 		return sn;
