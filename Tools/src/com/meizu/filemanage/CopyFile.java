@@ -21,7 +21,7 @@ public class CopyFile {
 		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
 		ReadFromFile.readFileByLines(Constant.txt_installFail, installFailName);
 		ReadFromFile.readFileByLines(Constant.txt_downloadFail, downloadFailName);
-		//copy文件
+		// copy文件
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, openFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, installFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_downloadFail, downloadFailName);

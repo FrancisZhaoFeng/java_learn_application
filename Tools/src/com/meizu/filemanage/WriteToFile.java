@@ -122,7 +122,14 @@ public class WriteToFile {
 				String name = an.getName();
 				name += "\r\n";
 				if (name.contains("解析错误")) {
-					fosPackageError.write(name.getBytes());
+					int index = 0;
+					String apkPName;
+					if (name.contains("-->")) {
+						apkPName = name.substring(index, name.indexOf("--->")) + "\r\n";
+					} else {
+						apkPName = name.substring(index, name.indexOf("apk") + 3) + "\r\n";
+					}
+					fosPackageError.write(apkPName.getBytes());
 				} else if (name.contains("APK安装失败")) {
 					int index = 0;
 					String apkPName;
