@@ -33,13 +33,13 @@ public class ExcelHandle
 {
 	/*** 读取Excel */
 
-	public static Sheet readExcel(String readExcel) {
+	public static Sheet readExcel(String readExcel, int sheetNum) {
 		Sheet sheet = null;
 		try {
 			InputStream is = new FileInputStream(readExcel);
 			Workbook rwb = Workbook.getWorkbook(is);
 			// Sheet的下标是从0开始 获取第一张Sheet表
-			sheet = rwb.getSheet(0);
+			sheet = rwb.getSheet(sheetNum);
 			// 关闭流
 			// rwb.close();
 			is.close();
@@ -140,12 +140,50 @@ public class ExcelHandle
 
 	public static void snFindID(String readExcel, String readFile) {
 		List<ApkName> apkName = new ArrayList<ApkName>();
-		Sheet sheet = ExcelHandle.readExcel(readExcel);
+		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 		ReadFromFile.readFileByLines(readFile, apkName);
-		for (int i = 0; i < apkName.size(); i++) {
-			ApkName an = apkName.get(i);
+		String inexitApk = "";
+		for (ApkName an : apkName) {
 			Cell[] cell = sheet.getRow(an.getSn() - 1);
-			System.out.println(cell[2].getContents() + "_" + cell[0].getContents() + "_" + an.getSn());
+			inexitApk = cell[0].getContents() + "-" + an.getSn() + "_" + cell[3].getContents();
+			System.out.println(inexitApk);
+			an.setName(inexitApk);
+		}
+		ReadFromFile.writeFileByLines("E:\\temp.txt", apkName);
+	}
+
+	public static void genDownload(String readExcel) {
+		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
+		for (int i = 0; i < sheet.getRows(); i++) {
+			Cell[] cell = sheet.getRow(i);
+			System.out.println(cell[1].getContents() + "-" + cell[0].getContents() + "_" + cell[4].getContents());
+		}
+	}
+
+	public static void nameFindPackage(String readTopExcel, String readFailExcel) {
+		Sheet sheetTopExcel = readExcel(readTopExcel, 0);
+		Sheet sheetFailExcel = readExcel(readFailExcel, 1);
+		List<String> name = new ArrayList<String>();
+		for (int i = 0; i < sheetFailExcel.getRows(); i++) {
+			Cell[] cell = sheetFailExcel.getRow(i);
+			for (int j = 0; j < sheetFailExcel.getColumns(); j++) {
+				name.add(cell[j].getContents());
+				System.out.println(cell[j].getContents());
+			}
+		}
+		System.out.println("============");
+		for (String strName : name) {
+			boolean flag = false;
+			for (int i = 0; i < sheetTopExcel.getRows(); i++) {
+				Cell[] cell = sheetTopExcel.getRow(i);
+				if (strName.equals(cell[2].getContents())) {
+					System.out.println(cell[3].getContents());
+					flag = true;
+					break;
+				}
+			}
+			if (!flag)
+				System.out.println(strName);
 		}
 	}
 
@@ -155,7 +193,7 @@ public class ExcelHandle
 			os = new FileOutputStream(writeFile);
 			WritableWorkbook wwb = Workbook.createWorkbook(os);
 			WritableSheet ws = wwb.createSheet("Test Sheet 1", 0);
-			Sheet sheet = ExcelHandle.readExcel(readExcel);
+			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 			for (int i = 0; i < apkName.size(); i++) {
 				ApkName an = apkName.get(i);
 				Cell[] cell = sheet.getRow(an.getSn() - 1);
@@ -206,8 +244,8 @@ public class ExcelHandle
 		List<ApkName> lApkName = new ArrayList<ApkName>();
 		ReadFromFile.readFileByLines(readText, lApkName);
 		try {
-			Sheet sheet = ExcelHandle.readExcel(readExcel);
-			if (readText.contains("install"))
+			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
+			if (readText.contains("Install"))
 				System.out.println("安装失败：");
 			else
 				System.out.println("打开失败：");
@@ -217,7 +255,7 @@ public class ExcelHandle
 				for (int i = minIndex; i <= maxIndex; i++) {
 					Cell[] cell = sheet.getRow(i);
 					if (cell[3].getContents().equals(pName)) {
-						System.out.println(cell[2].getContents());
+						System.out.println(cell[2].getContents() + "_" + pName);
 					}
 				}
 			}
