@@ -3,10 +3,16 @@ package com.meizu.filemanage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class WriteToFile {
 
+	/**
+	 * @param apkName
+	 * @param num
+	 * @return 根据num值，执行第一次或第二次报告统计
+	 */
 	public static String writeRun(List<ApkName> apkName, int num) {
 		if (num == 1)
 			return WriteToFile.writeFristRun(apkName);
@@ -14,6 +20,10 @@ public class WriteToFile {
 			return WriteToFile.writeSecondRun(apkName);
 	}
 
+	/**
+	 * @param apkName
+	 * @return 第一次报告统计，生成txt文件数为5及过滤关键词：安装打开成功（不包含：AppTestCase），安装失败(APK安装失败)，打开失败(打开失败)，下载失败()，服务器不存在的apk
+	 */
 	@SuppressWarnings("resource")
 	public static String writeFristRun(List<ApkName> apkName) {
 		FileOutputStream fosInstallSussess;
@@ -27,6 +37,7 @@ public class WriteToFile {
 		List<ApkName> lFileName = new ArrayList<ApkName>();
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
+		Collections.sort(lFileName);
 		try {
 			fosInstallSussess = new FileOutputStream(Constant.txt_installSuccess);
 			fosInstallFail = new FileOutputStream(Constant.txt_installFail);
@@ -73,16 +84,19 @@ public class WriteToFile {
 				boolean flag = false;
 				if (apkSize[i] == 0) {
 					// 赋值给downloadFailName中的name值（文件名）
-					for (ApkName an : lFileName) {
+					for (int j = minIndex; j <= maxIndex; j++) {
+						ApkName an = lFileName.get(j);
 						if (an.getSn() == i) {
 							fosDownloadFail.write((an.getName() + "\r\n").getBytes());
 							downloadFailName.add(an);
 							flag = true;
 							break;
 						}
+						if (an.getSn() > i)
+							break;
 					}
 					if (!flag)
-						fosInexitApk.write(("" + i + "_\r\n").getBytes());
+						fosInexitApk.write(("" + i + "_\r\n").getBytes()); // 记录服务器不存在的apk
 				}
 			}
 			fosInstallSussess.write(("最小值：" + minIndex + "\n最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex)).getBytes());
@@ -102,6 +116,10 @@ public class WriteToFile {
 		return "" + minIndex + "_" + maxIndex;
 	}
 
+	/**
+	 * @param apkName
+	 * @return 第一次报告统计，生成txt文件数为3及过滤关键词：安装包解析错误（解析错误），安装失败(APK安装失败)，打开失败(打开失败)
+	 */
 	public static String writeSecondRun(List<ApkName> apkName) {
 		FileOutputStream fosPackageError;
 		FileOutputStream fosInstallFail;
@@ -164,6 +182,9 @@ public class WriteToFile {
 		return "" + minIndex + "_" + maxIndex;
 	}
 
+	/**
+	 * 服务器找到不存在的apk
+	 */
 	public static void serverFindInexid() {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		List<ApkName> inexitName = new ArrayList<ApkName>();
@@ -183,10 +204,11 @@ public class WriteToFile {
 			}
 		}
 		ReadFromFile.writeFileByLines("d:\\temp.txt", inexitName);
-		System.out.print("以获取服务器不存在的id");
+		System.out.print("已获取服务器不存在的id：d:\\temp.txt");
 	}
 
 	public static void main(String[] args) {
-		WriteToFile.serverFindInexid();
+		// WriteToFile.serverFindInexid();
+		// ExcelHandle.snFindID(Constant.excel_topapps, "d:\\temp.txt", 1);
 	}
 }

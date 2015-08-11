@@ -3,7 +3,6 @@ package com.meizu.filemanage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -183,6 +182,34 @@ public class ReadFromFile {
 	}
 
 	/**
+	 * 以行为单位读取文件，常用于读面向行的格式化文件
+	 */
+	public static void readFile(String fileName, List<String> apkName) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			System.out.println("以行为单位读取文件内容，一次读一整行：" + fileName);
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+
+			// 一次读入一行，直到读入null为文件结束
+			while ((tempString = reader.readLine()) != null) {
+				apkName.add(tempString);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	/**
 	 * 随机读取文件内容
 	 */
 	public static void readFileByRandomAccess(String fileName) {
@@ -226,13 +253,13 @@ public class ReadFromFile {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void writeFileByLines(String writeFile,List<ApkName> apkName){
+
+	public static void writeFileByLines(String writeFile, List<ApkName> apkName) {
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(writeFile);
-			for(ApkName an :apkName){
-				fos.write((an.getName()+"\r\n").getBytes());
+			for (ApkName an : apkName) {
+				fos.write((an.getName() + "\r\n").getBytes());
 			}
 			fos.flush();
 			fos.close();

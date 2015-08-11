@@ -5,11 +5,17 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author zhaoguofeng 根据文件信息，从服务器中copy apk文件到本地目录
+ */
 public class CopyFile {
 	public static void main(String[] args) {
 		CopyFile.copyFile();
 	}
 
+	/**
+	 * 根据类WriteToFile中生成的文件：txt_openFail,txt_installFail,txt_downloadFail 的内容 从服务器中copy对应的apk到本地文件夹中
+	 */
 	public static void copyFile() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> lFileName = new ArrayList<ApkName>();
@@ -26,9 +32,23 @@ public class CopyFile {
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, installFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_downloadFail, downloadFailName);
 	}
+	
+	/**
+	 * 用于自由的copy文件
+	 */
+	public static void copyFileTest() {
+		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
+		List<ApkName> lFileName = new ArrayList<ApkName>();
+		List<ApkName> openFailName = new ArrayList<ApkName>();
+		// 初始化list
+		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
+		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
+		// copy文件
+		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, openFailName);
+	}
 
 	/**
-	 * 复制打开和下载失败的apk
+	 * 执行复制操作的方法
 	 * 
 	 * @param serverPath
 	 * @param odFailPath

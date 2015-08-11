@@ -8,6 +8,33 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainGet {
+	public static void main(String[] args) {
+		int num = 2;// 代表1轮测试，还是2轮测试
+		String meizuAutoTest = "";
+		if (num == 1)
+			meizuAutoTest = Constant.fold_MeizuAutoTest;
+		else
+			meizuAutoTest = Constant.fold_srMeizuAutoTest;
+		// 什么list
+		List<ApkName> lFileName = new ArrayList<ApkName>();
+		List<ApkName> apkName = new ArrayList<ApkName>();
+		// 显示文件内容
+		ReadFromFile.getFileList(meizuAutoTest, lFileName, ".txt");
+		for (ApkName strFileName : lFileName)
+			ReadFromFile.readFileByLines(meizuAutoTest + strFileName.getName(), apkName);
+		Collections.sort(apkName);
+		String indexRange = WriteToFile.writeRun(apkName, num);
+		ExcelHandle.genExcel(num);
+		if (num == 1)
+			CopyFile.copyFile();
+		if (num == 2) {
+			int minIndex = Integer.parseInt(indexRange.split("_")[0]);
+			int maxIndex = Integer.parseInt(indexRange.split("_")[1]);
+			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srInstallFail, minIndex, maxIndex);
+			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srOpenFail, minIndex, maxIndex);
+		}
+	}
+
 	/**
 	 * A方法追加文件：使用RandomAccessFile
 	 */
@@ -37,33 +64,6 @@ public class MainGet {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static void main(String[] args) {
-		int num = 1;// 代表1轮测试，还是2轮测试
-		String meizuAutoTest = "";
-		if (num == 1)
-			meizuAutoTest = Constant.fold_MeizuAutoTest;
-		else
-			meizuAutoTest = Constant.fold_srMeizuAutoTest;
-		// 什么list
-		List<ApkName> lFileName = new ArrayList<ApkName>();
-		List<ApkName> apkName = new ArrayList<ApkName>();
-		// 显示文件内容
-		ReadFromFile.getFileList(meizuAutoTest, lFileName, ".txt");
-		for (ApkName strFileName : lFileName)
-			ReadFromFile.readFileByLines(meizuAutoTest + strFileName.getName(), apkName);
-		Collections.sort(apkName);
-		String indexRange = WriteToFile.writeRun(apkName, num);
-		ExcelHandle.copyExcel(num);
-		if (num == 1)
-			CopyFile.copyFile();
-		if (num == 2) {
-			int minIndex = Integer.parseInt(indexRange.split("_")[0]);
-			int maxIndex = Integer.parseInt(indexRange.split("_")[1]);
-			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srInstallFail, minIndex, maxIndex);
-			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srOpenFail, minIndex, maxIndex);
 		}
 	}
 }

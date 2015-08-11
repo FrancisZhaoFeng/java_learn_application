@@ -31,12 +31,16 @@ import jxl.write.WritableWorkbook;
 public class ExcelHandle
 
 {
-	/*** 读取Excel */
-
+	/**
+	 * @param readExcel
+	 * @param sheetNum
+	 * @return 读取excel文件
+	 */
 	public static Sheet readExcel(String readExcel, int sheetNum) {
 		Sheet sheet = null;
 		try {
 			InputStream is = new FileInputStream(readExcel);
+			System.out.println(readExcel);
 			Workbook rwb = Workbook.getWorkbook(is);
 			// Sheet的下标是从0开始 获取第一张Sheet表
 			sheet = rwb.getSheet(sheetNum);
@@ -49,8 +53,10 @@ public class ExcelHandle
 		return sheet;
 	}
 
-	/** 输出Excel */
-
+	/**
+	 * @param os
+	 *            输出excel文件
+	 */
 	public static void writeExcel(OutputStream os) {
 		try {
 			/**
@@ -108,13 +114,10 @@ public class ExcelHandle
 	}
 
 	/**
-	 * 将file1拷贝后,进行修改并创建输出对象file2
-	 * 
-	 * 单元格原有的格式化修饰不能去掉，但仍可将新的单元格修饰加上去，
-	 * 
-	 * 以使单元格的内容以不同的形式表现
+	 * @param file1
+	 * @param file2
+	 *            将file1拷贝后,进行修改并创建输出对象file2 单元格原有的格式化修饰不能去掉，但仍可将新的单元格修饰加上去， 以使单元格的内容以不同的形式表现
 	 */
-
 	public static void modifyExcel(File file1, File file2) {
 		try {
 			Workbook rwb = Workbook.getWorkbook(file1);
@@ -138,20 +141,39 @@ public class ExcelHandle
 		}
 	}
 
-	public static void snFindID(String readExcel, String readFile) {
+	/**
+	 * @param readExcel
+	 * @param readFile
+	 *            通过apk编号，在top排行榜excel表中找到需要的信息 1.pid+编号+包名 ，用于下载apk 2.应用名称（中文名）+包名，用于报告统计 3.编号+包名，用于生产apk名字
+	 */
+	public static void snFindID(String readExcel, String readFile, int type) {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 		ReadFromFile.readFileByLines(readFile, apkName);
-		String inexitApk = "";
+		String typeName = "";
 		for (ApkName an : apkName) {
 			Cell[] cell = sheet.getRow(an.getSn() - 1);
-			inexitApk = cell[0].getContents() + "-" + an.getSn() + "_" + cell[3].getContents();
-			System.out.println(inexitApk);
-			an.setName(inexitApk);
+			switch (type) {
+			case 1:
+				typeName = cell[0].getContents() + "-" + an.getSn() + "_" + cell[3].getContents();
+				break;
+			case 2:
+				typeName = cell[2].getContents() + "_" + cell[3].getContents();
+				break;
+			case 3:
+				typeName = an.getSn() + "_" + cell[3].getContents() + ".apk";
+				an.setName(typeName);
+				break;
+			}
+			System.out.println(typeName);
 		}
 		ReadFromFile.writeFileByLines("E:\\temp.txt", apkName);
 	}
 
+	/**
+	 * @param readExcel
+	 *            读取top排行榜excel文件，生成用于下载的字符串：pid+编号+包名
+	 */
 	public static void genDownload(String readExcel) {
 		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 		for (int i = 0; i < sheet.getRows(); i++) {
@@ -160,6 +182,39 @@ public class ExcelHandle
 		}
 	}
 
+	/**
+	 * @param allFile
+	 * @param readFailExcel
+	 *            用于最终验证，通过包名获取apk名字，从而将apk复制到本地进行最终验证
+	 */
+	public static void packageFindApkName(String serverPath, String readFailExcel) {
+		List<ApkName> listApkFName = new ArrayList<ApkName>();
+		ReadFromFile.getFileList(serverPath, listApkFName, ".apk");
+		Sheet sheetFailExcel = readExcel(readFailExcel, 1);
+		List<String> name = new ArrayList<String>();
+		for (int i = 0; i < sheetFailExcel.getRows(); i++) {
+			Cell[] cell = sheetFailExcel.getRow(i);
+			name.add(cell[1].getContents());
+		}
+		for (String strName : name) {
+			boolean flag = false;
+			for (int i = 0; i < listApkFName.size(); i++) {
+				if ((listApkFName.get(i).getName().contains(strName))) {
+					System.out.println(listApkFName.get(i).getName());
+					flag = true;
+					break;
+				}
+			}
+			if (!flag)
+				System.out.println(strName);
+		}
+	}
+
+	/**
+	 * @param readTopExcel
+	 * @param readFailExcel
+	 *            通过应用程序名（中文名），找到其包名，用于开始报告只统计应用程序名（中文名），后需求更改为：应用程序名（中文名）+包名
+	 */
 	public static void nameFindPackage(String readTopExcel, String readFailExcel) {
 		Sheet sheetTopExcel = readExcel(readTopExcel, 0);
 		Sheet sheetFailExcel = readExcel(readFailExcel, 1);
@@ -187,15 +242,48 @@ public class ExcelHandle
 		}
 	}
 
-	public static void copyExecl(String readExcel, String writeFile, List<ApkName> apkName) {
+	/**
+	 * @param readTopExcel
+	 * @param readName
+	 *            用于apk原始名字名称，找到其应用程序名（中文名）
+	 */
+	public static void findApkName(String readTopExcel, String readName) {
+		Sheet sheetTopExcel = readExcel(readTopExcel, 1);
+		List<String> name = new ArrayList<String>();
+		ReadFromFile.readFile(readName, name);
+		for (String strName : name) {
+			boolean flag = false;
+			String strtemp = strName.substring(0, strName.indexOf(".apk"));
+			for (int i = 0; i < sheetTopExcel.getRows(); i++) {
+				Cell[] cell = sheetTopExcel.getRow(i);
+				if (cell[6].getContents().contains(strtemp)) {
+					System.out.println(cell[1].getContents() + "_" + strName);
+					flag = true;
+					break;
+				}
+			}
+			if (!flag)
+				System.out.println(strName);
+		}
+	}
+
+	/**
+	 * @param readExcel
+	 * @param writeFile
+	 * @param apkName
+	 *            以topapps文件为基础，生成excel文件
+	 */
+	public static void genExecl(String readExcel, String writeFile, String readFailFile) {// List<ApkName> apkName
+		List<ApkName> failName = new ArrayList<ApkName>();
+		ReadFromFile.readFileByLines(readFailFile, failName);//
 		OutputStream os;
 		try {
 			os = new FileOutputStream(writeFile);
 			WritableWorkbook wwb = Workbook.createWorkbook(os);
 			WritableSheet ws = wwb.createSheet("Test Sheet 1", 0);
 			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
-			for (int i = 0; i < apkName.size(); i++) {
-				ApkName an = apkName.get(i);
+			for (int i = 0; i < failName.size(); i++) {
+				ApkName an = failName.get(i);
 				Cell[] cell = sheet.getRow(an.getSn() - 1);
 				for (int j = 0; j < cell.length + 1; j++) {
 					if (j == 0) {
@@ -216,30 +304,29 @@ public class ExcelHandle
 		}
 	}
 
-	public static void copyExcelFristRun() {
+	public static void genExcelFristRun() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
-		List<ApkName> downloadFailName = new ArrayList<ApkName>();
-		List<ApkName> openFailName = new ArrayList<ApkName>();
-		List<ApkName> installFailName = new ArrayList<ApkName>();
 		// 根据文件夹中的app获取apk名称
-		ReadFromFile.readFileByLines(Constant.txt_downloadFail, downloadFailName);
-		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
-		ReadFromFile.readFileByLines(Constant.txt_installFail, installFailName);
 		// 根据apk名称重excel表中提取对应的行
-		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_downloadFail, downloadFailName);
-		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_openFail, openFailName);
-		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_installFail, installFailName);
+		ExcelHandle.genExecl(Constant.excel_topapps, Constant.excel_downloadFail, Constant.txt_downloadFail);
+		ExcelHandle.genExecl(Constant.excel_topapps, Constant.excel_openFail, Constant.txt_openFail);
+		ExcelHandle.genExecl(Constant.excel_topapps, Constant.excel_installFail, Constant.txt_installFail);
 	}
 
-	public static void copyExcelSecondRun() {
+	public static void genExcelSecondRun() {
 		// 定义list：解析失败
-		List<ApkName> packageError = new ArrayList<ApkName>();
 		// 根据文件夹中的app获取apk名称
-		ReadFromFile.readFileByLines(Constant.txt_srPackageError, packageError);
 		// 根据apk名称重excel表中提取对应的行
-		ExcelHandle.copyExecl(Constant.excel_topapps, Constant.excel_srPackageError, packageError);
+		ExcelHandle.genExecl(Constant.excel_topapps, Constant.excel_srPackageError, Constant.txt_srPackageError);
 	}
 
+	/**
+	 * @param readExcel
+	 * @param readText
+	 * @param minIndex
+	 * @param maxIndex
+	 * 通过包名获取应用名称（中文名），输出：应用名称（中文名）+包名，用于报告统计
+	 */
 	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		List<ApkName> lApkName = new ArrayList<ApkName>();
 		ReadFromFile.readFileByLines(readText, lApkName);
@@ -266,21 +353,29 @@ public class ExcelHandle
 
 	}
 
-	public static void copyExcel(int num) {
+	/**
+	 * @param num
+	 * 根据num值，调用第一轮或第二轮报告生成
+	 */
+	public static void genExcel(int num) {
 		if (num == 1)
-			ExcelHandle.copyExcelFristRun();
+			ExcelHandle.genExcelFristRun();
 		else {
-			ExcelHandle.copyExcelSecondRun();
+			ExcelHandle.genExcelSecondRun();
 		}
 
 	}
 
 	public static void main(String args[]) {
 		// ExcelHandle.copyExcelFristRun();
+		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelSecondRun();
 		// ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
-		ExcelHandle.snFindID(Constant.excel_topapps, "D:\\temp.txt");
+		// ExcelHandle.snFindID(Constant.excel_topapps, "D:\\temp.txt");
 		// ExcelHandle.snFindID(Constant.excel_topapps, Constant.txt_inexitApk);
+		// ExcelHandle.findApkName("E:\\3W_Apps\\top优质应用.xls", "D:\\temp.txt");
+		// ExcelHandle.genDownload(Constant.excel_topapps);
+		ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 	}
 
 }
