@@ -4,6 +4,7 @@ package com.meizu.filemanage;
 //参考：
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +29,7 @@ import jxl.write.WritableImage;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
-public class ExcelHandle
-
-{
+public class ExcelHandle {
 	/**
 	 * @param readExcel
 	 * @param sheetNum
@@ -57,7 +56,7 @@ public class ExcelHandle
 	 * @param os
 	 *            输出excel文件
 	 */
-	public static void writeExcel(OutputStream os) {
+	public static void writeExcelExample(OutputStream os) {
 		try {
 			/**
 			 * 只能通过API提供的 工厂方法来创建Workbook，而不能使用WritableWorkbook的构造函数，因为类WritableWorkbook的构造函数为 protected类型：方法一：直接从目标文件中读取 WritableWorkbook wwb = Workbook.createWorkbook(new
@@ -267,13 +266,14 @@ public class ExcelHandle
 		}
 	}
 
+
 	/**
 	 * @param readExcel
 	 * @param writeFile
 	 * @param apkName
 	 *            以topapps文件为基础，生成excel文件
 	 */
-	public static void genExecl(String readExcel, String writeFile, String readFailFile) {// List<ApkName> apkName
+	public static void genExecl(String readExcel, String writeFile, String readFailFile) {
 		List<ApkName> failName = new ArrayList<ApkName>();
 		ReadFromFile.readFileByLines(readFailFile, failName);//
 		OutputStream os;
@@ -325,7 +325,7 @@ public class ExcelHandle
 	 * @param readText
 	 * @param minIndex
 	 * @param maxIndex
-	 * 通过包名获取应用名称（中文名），输出：应用名称（中文名）+包名，用于报告统计
+	 *            通过包名获取应用名称（中文名），输出：应用名称（中文名）+包名，用于报告统计
 	 */
 	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		List<ApkName> lApkName = new ArrayList<ApkName>();
@@ -355,7 +355,7 @@ public class ExcelHandle
 
 	/**
 	 * @param num
-	 * 根据num值，调用第一轮或第二轮报告生成
+	 *            根据num值，调用第一轮或第二轮报告生成
 	 */
 	public static void genExcel(int num) {
 		if (num == 1)
@@ -375,7 +375,7 @@ public class ExcelHandle
 		// ExcelHandle.snFindID(Constant.excel_topapps, Constant.txt_inexitApk);
 		// ExcelHandle.findApkName("E:\\3W_Apps\\top优质应用.xls", "D:\\temp.txt");
 		// ExcelHandle.genDownload(Constant.excel_topapps);
-		ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
+		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 	}
 
 }
