@@ -10,7 +10,8 @@ import java.util.List;
  */
 public class CopyFile {
 	public static void main(String[] args) {
-		CopyFile.copyFile();
+		// CopyFile.copyFile();
+		CopyFile.copyFileTest();
 	}
 
 	/**
@@ -24,15 +25,15 @@ public class CopyFile {
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		// 初始化list
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
-		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
-		ReadFromFile.readFileByLines(Constant.txt_installFail, installFailName);
-		ReadFromFile.readFileByLines(Constant.txt_downloadFail, downloadFailName);
+		ReadFromFile.readAppTest(Constant.txt_openFail, openFailName);
+		ReadFromFile.readAppTest(Constant.txt_installFail, installFailName);
+		ReadFromFile.readAppTest(Constant.txt_downloadFail, downloadFailName);
 		// copy文件
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, openFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, installFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_downloadFail, downloadFailName);
 	}
-	
+
 	/**
 	 * 用于自由的copy文件
 	 */
@@ -42,11 +43,10 @@ public class CopyFile {
 		List<ApkName> openFailName = new ArrayList<ApkName>();
 		// 初始化list
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
-		ReadFromFile.readFileByLines(Constant.txt_openFail, openFailName);
+		ReadFromFile.readAppTest("E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\flyme4_iof_liuwen.txt", openFailName);
 		// copy文件
-		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, openFailName);
+		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, openFailName);
 	}
-
 	/**
 	 * 执行复制操作的方法
 	 * 

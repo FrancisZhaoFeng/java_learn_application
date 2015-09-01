@@ -56,9 +56,10 @@ public class WriteToFile {
 				}
 				apkSize[an.getSn()] = 1;
 				name += "\r\n";
-				if (!name.contains("AppTestCase")) {
-					fosInstallSussess.write(name.getBytes());
-				} else if (name.contains("APK安装失败")) {
+				// if (!name.contains("AppTestCase")) {
+				// fosInstallSussess.write(name.getBytes());
+				// } else
+				if (name.contains("APK安装失败")) {
 					int index = 0;
 					String apkPName;
 					if (name.contains("-->")) {
@@ -78,7 +79,9 @@ public class WriteToFile {
 					fosOpenFail.write(apkPName.getBytes());
 				}
 			}
-			System.out.println("最小值：" + minIndex + "\n最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex));
+			System.out.println("此次测试最小值：" + minIndex + "\n此次测试最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex));
+			minIndex = ReadFromFile.readFileGetMin(Constant.localYesPath);
+			System.out.print("昨天最大值为：" + minIndex);
 			// 将下载失败的与服务器上的apk对比，并已apk名称形式保存
 			for (int i = minIndex; i <= maxIndex; i++) {
 				boolean flag = false;
@@ -203,8 +206,8 @@ public class WriteToFile {
 				inexitName.add(an);
 			}
 		}
-		ReadFromFile.writeFileByLines("d:\\temp.txt", inexitName);
-		System.out.print("已获取服务器不存在的id：d:\\temp.txt");
+		ReadFromFile.writeFileByLines(Constant.fold_TextExcel + "serverFindInexid.txt", inexitName);
+		System.out.print("已获取服务器不存在的id：" + Constant.fold_TextExcel + "serverFindInexid.txt");
 	}
 
 	public static void main(String[] args) {

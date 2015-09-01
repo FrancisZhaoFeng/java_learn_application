@@ -138,7 +138,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public static void readFileByLines(String fileName, List<ApkName> apkName) {
+	public static void readAppTest(String fileName, List<ApkName> apkName) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -150,7 +150,7 @@ public class ReadFromFile {
 			while ((tempString = reader.readLine()) != null) {
 				ApkName an = new ApkName();
 				// 显示行号
-				if (!tempString.contains("Crash") && !tempString.contains("20150730040414") && !tempString.contains("NotRespond")) {
+				if (!tempString.contains("Crash") && !tempString.contains("版本号") && !tempString.contains("NotRespond") && !tempString.contains("异常获取")) {
 					int indexNum = 0, index_ = 0;
 					Pattern patternFristChar = Pattern.compile("[0-9]");
 					Pattern patternLetter = Pattern.compile("[A-Z]");
@@ -191,7 +191,6 @@ public class ReadFromFile {
 			System.out.println("以行为单位读取文件内容，一次读一整行：" + fileName);
 			reader = new BufferedReader(new FileReader(file));
 			String tempString = null;
-
 			// 一次读入一行，直到读入null为文件结束
 			while ((tempString = reader.readLine()) != null) {
 				apkName.add(tempString);
@@ -207,6 +206,35 @@ public class ReadFromFile {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 以行为单位读取文件，常用于读面向行的格式化文件
+	 */
+	public static int readFileGetMin(String fileName) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		int minValue = 0;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+			// 一次读入一行，直到读入null为文件结束
+			while ((tempString = reader.readLine()) != null) {
+				if (tempString.contains("最大值"))
+					minValue = Integer.parseInt(tempString.split("：")[1]);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+		return minValue;
 	}
 
 	/**

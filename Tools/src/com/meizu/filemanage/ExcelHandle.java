@@ -4,7 +4,6 @@ package com.meizu.filemanage;
 //参考：
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +28,8 @@ import jxl.write.WritableImage;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
+import com.meizu.python.ReportInfo;
+
 public class ExcelHandle {
 	/**
 	 * @param readExcel
@@ -52,12 +53,44 @@ public class ExcelHandle {
 		return sheet;
 	}
 
+	public static void writePyExcel(List<ReportInfo> reportInfos, String writeExcel, int page) {
+		try {
+			OutputStream os = new FileOutputStream(writeExcel);
+			WritableWorkbook wwb = Workbook.createWorkbook(os);
+			// 创建Excel工作表 指定名称和位置
+			WritableSheet ws = wwb.createSheet("sheet " + page, page);
+			ws.setColumnView(1, 40);
+			ws.setColumnView(2, 50);
+			ws.setColumnView(3, 20);
+			/************** 往工作表中添加数据 *****************/
+			for (int i = 0; i < reportInfos.size(); i++) {
+				Number nSn = new Number(0, i, reportInfos.get(i).getSn());
+				Label lChName = new Label(1, i, reportInfos.get(i).getChName());
+				Label lPName = new Label(2, i, reportInfos.get(i).getpName());
+				Label lApkInfo = new Label(3, i, reportInfos.get(i).getApkInfo());
+				ws.addCell(nSn);
+				ws.addCell(lChName);
+				ws.addCell(lPName);
+				ws.addCell(lApkInfo);
+
+			}
+			// 7.写入工作表
+			wwb.write();
+			wwb.close();
+			os.close();
+			System.out.println("写入excel成功:" + writeExcel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * @param os
 	 *            输出excel文件
 	 */
-	public static void writeExcelExample(OutputStream os) {
+	public static void writeExcelExample(String writeExcel) {
 		try {
+			OutputStream os = new FileOutputStream(writeExcel);
 			/**
 			 * 只能通过API提供的 工厂方法来创建Workbook，而不能使用WritableWorkbook的构造函数，因为类WritableWorkbook的构造函数为 protected类型：方法一：直接从目标文件中读取 WritableWorkbook wwb = Workbook.createWorkbook(new
 			 * File(targetfile));方法 二：如下实例所示 将WritableWorkbook直接写入到输出流
@@ -148,7 +181,7 @@ public class ExcelHandle {
 	public static void snFindID(String readExcel, String readFile, int type) {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
-		ReadFromFile.readFileByLines(readFile, apkName);
+		ReadFromFile.readAppTest(readFile, apkName);
 		String typeName = "";
 		for (ApkName an : apkName) {
 			Cell[] cell = sheet.getRow(an.getSn() - 1);
@@ -189,7 +222,7 @@ public class ExcelHandle {
 	public static void packageFindApkName(String serverPath, String readFailExcel) {
 		List<ApkName> listApkFName = new ArrayList<ApkName>();
 		ReadFromFile.getFileList(serverPath, listApkFName, ".apk");
-		Sheet sheetFailExcel = readExcel(readFailExcel, 1);
+		Sheet sheetFailExcel = readExcel(readFailExcel, 2);
 		List<String> name = new ArrayList<String>();
 		for (int i = 0; i < sheetFailExcel.getRows(); i++) {
 			Cell[] cell = sheetFailExcel.getRow(i);
@@ -214,31 +247,47 @@ public class ExcelHandle {
 	 * @param readFailExcel
 	 *            通过应用程序名（中文名），找到其包名，用于开始报告只统计应用程序名（中文名），后需求更改为：应用程序名（中文名）+包名
 	 */
-	public static void nameFindPackage(String readTopExcel, String readFailExcel) {
+	public static void nameFindPackage(String readTopExcel, String readFailExcel, int type) {
 		Sheet sheetTopExcel = readExcel(readTopExcel, 0);
 		Sheet sheetFailExcel = readExcel(readFailExcel, 1);
 		List<String> name = new ArrayList<String>();
 		for (int i = 0; i < sheetFailExcel.getRows(); i++) {
 			Cell[] cell = sheetFailExcel.getRow(i);
 			for (int j = 0; j < sheetFailExcel.getColumns(); j++) {
-				name.add(cell[j].getContents());
-				System.out.println(cell[j].getContents());
-			}
-		}
-		System.out.println("============");
-		for (String strName : name) {
-			boolean flag = false;
-			for (int i = 0; i < sheetTopExcel.getRows(); i++) {
-				Cell[] cell = sheetTopExcel.getRow(i);
-				if (strName.equals(cell[2].getContents())) {
-					System.out.println(cell[3].getContents());
-					flag = true;
-					break;
+				String cName = cell[j].getContents().trim();
+				if (cName != null && !cName.equals("")) {
+					name.add(cName);
 				}
 			}
+		}
+		System.out.println("================");
+		for (String strName : name) {
+			boolean flag = false;
+			int num = 0;
+			for (int i = 0; i < sheetTopExcel.getRows(); i++) {
+				Cell[] cell = sheetTopExcel.getRow(i);
+				if (strName.equals(cell[2].getContents().trim())) {
+					num++;
+					switch (type) {
+					case 1:
+						System.out.println(cell[3].getContents());
+						break;
+					case 2:
+						System.out.println(i + 1 + "_" + cell[3].getContents() + ".apk");
+						break;
+					case 3:
+						System.out.println(i + 1 + "&~&" + strName + "&~&" + cell[3].getContents());
+						break;
+					}
+					flag = true;
+				}
+			}
+			if (num >= 2)
+				System.out.println("num:" + num + "==apk:" + strName);
 			if (!flag)
 				System.out.println(strName);
 		}
+		System.out.println("获取apk文件名成功");
 	}
 
 	/**
@@ -266,7 +315,6 @@ public class ExcelHandle {
 		}
 	}
 
-
 	/**
 	 * @param readExcel
 	 * @param writeFile
@@ -275,7 +323,7 @@ public class ExcelHandle {
 	 */
 	public static void genExecl(String readExcel, String writeFile, String readFailFile) {
 		List<ApkName> failName = new ArrayList<ApkName>();
-		ReadFromFile.readFileByLines(readFailFile, failName);//
+		ReadFromFile.readAppTest(readFailFile, failName);//
 		OutputStream os;
 		try {
 			os = new FileOutputStream(writeFile);
@@ -329,7 +377,7 @@ public class ExcelHandle {
 	 */
 	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		List<ApkName> lApkName = new ArrayList<ApkName>();
-		ReadFromFile.readFileByLines(readText, lApkName);
+		ReadFromFile.readAppTest(readText, lApkName);
 		try {
 			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 			if (readText.contains("Install"))
@@ -342,7 +390,7 @@ public class ExcelHandle {
 				for (int i = minIndex; i <= maxIndex; i++) {
 					Cell[] cell = sheet.getRow(i);
 					if (cell[3].getContents().equals(pName)) {
-						System.out.println(cell[2].getContents() + "_" + pName);
+						System.out.println(cell[2].getContents() + "&~&" + pName);
 					}
 				}
 			}
@@ -376,6 +424,8 @@ public class ExcelHandle {
 		// ExcelHandle.findApkName("E:\\3W_Apps\\top优质应用.xls", "D:\\temp.txt");
 		// ExcelHandle.genDownload(Constant.excel_topapps);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
+		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
+		ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
 	}
 
 }

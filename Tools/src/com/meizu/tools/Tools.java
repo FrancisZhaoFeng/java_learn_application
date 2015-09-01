@@ -3,6 +3,7 @@ package com.meizu.tools;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.meizu.filemanage.Constant;
@@ -17,6 +18,13 @@ public class Tools {
 		String date = df.format(new Date());
 		System.out.println(date);// new Date()为获取当前系统时间
 		return date;
+	}
+
+	public static String getYDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+		String yesterday = new SimpleDateFormat("yyyy-MM-dd ").format(cal.getTime());
+		return yesterday.trim();
 	}
 
 	public static void gAllFold() {

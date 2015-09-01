@@ -15,13 +15,13 @@ public class MainGet {
 			meizuAutoTest = Constant.fold_MeizuAutoTest;
 		else
 			meizuAutoTest = Constant.fold_srMeizuAutoTest;
-		// 什么list
+		// 吃时候list
 		List<ApkName> lFileName = new ArrayList<ApkName>();
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		// 显示文件内容
 		ReadFromFile.getFileList(meizuAutoTest, lFileName, ".txt");
 		for (ApkName strFileName : lFileName)
-			ReadFromFile.readFileByLines(meizuAutoTest + strFileName.getName(), apkName);
+			ReadFromFile.readAppTest(meizuAutoTest + strFileName.getName(), apkName);
 		Collections.sort(apkName);
 		String indexRange = WriteToFile.writeRun(apkName, num);
 		ExcelHandle.genExcel(num);
@@ -32,6 +32,7 @@ public class MainGet {
 			int maxIndex = Integer.parseInt(indexRange.split("_")[1]);
 			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srInstallFail, minIndex, maxIndex);
 			ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_srOpenFail, minIndex, maxIndex);
+			System.out.println("二轮报告生成完成");
 		}
 	}
 
