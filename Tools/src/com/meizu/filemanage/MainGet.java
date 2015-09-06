@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MainGet {
 	public static void main(String[] args) {
-		int num = 2;// 代表1轮测试，还是2轮测试
+		int num = 1;// 代表1轮测试，还是2轮测试
 		String meizuAutoTest = "";
 		if (num == 1)
 			meizuAutoTest = Constant.fold_MeizuAutoTest;
@@ -27,6 +27,7 @@ public class MainGet {
 		ExcelHandle.genExcel(num);
 		if (num == 1)
 			CopyFile.copyFile();
+		System.out.println("一轮报告生成完成");
 		if (num == 2) {
 			int minIndex = Integer.parseInt(indexRange.split("_")[0]);
 			int maxIndex = Integer.parseInt(indexRange.split("_")[1]);

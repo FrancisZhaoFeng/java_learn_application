@@ -79,11 +79,11 @@ public class WriteToFile {
 					fosOpenFail.write(apkPName.getBytes());
 				}
 			}
-			System.out.println("此次测试最小值：" + minIndex + "\n此次测试最大值：" + maxIndex + "\n共：" + (maxIndex - minIndex));
+			System.out.println("此次测试最小值：" + minIndex + "\n此次测试最大值：" + maxIndex);
 			minIndex = ReadFromFile.readFileGetMin(Constant.localYesPath);
-			System.out.print("昨天最大值为：" + minIndex);
+			System.out.println("昨天最大值为：" + minIndex + "\n共：" + (maxIndex - minIndex));
 			// 将下载失败的与服务器上的apk对比，并已apk名称形式保存
-			for (int i = minIndex; i <= maxIndex; i++) {
+			for (int i = minIndex + 1; i <= maxIndex; i++) {
 				boolean flag = false;
 				if (apkSize[i] == 0) {
 					// 赋值给downloadFailName中的name值（文件名）
