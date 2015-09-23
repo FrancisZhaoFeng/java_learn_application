@@ -63,7 +63,7 @@ public class PyReportHandle {
 			ReportInfo reportInfo = new ReportInfo();
 			String re[] = an.split(strSplit);
 			reportInfo.setSn(Integer.parseInt(re[1].split("_")[0]));
-			reportInfo.setpName(re[1].substring(re[1].indexOf("_") + 1, re[1].indexOf(".apk")));
+			reportInfo.setpName(re[1].substring(re[1].indexOf("_") + 1, re[1].lastIndexOf(".apk")));
 			switch (re[0]) {
 			case "crash":
 				re[0] = "应用崩溃";
@@ -147,13 +147,13 @@ public class PyReportHandle {
 
 	public static void main(String[] args) {
 		PyReportHandle pyReportHandle = new PyReportHandle();
-		List<ReportInfo> pyReport = pyReportHandle.getPythonInfo(Constant.fold_TextExcel + "flyme5_iof_lijie.txt");
-		List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
+		List<ReportInfo> pyReport = pyReportHandle.getPythonInfo("E:\\3W_Apps\\flyme_app_report\\flyme5_MA01-HTC_iof\\flyme5_MA01-HTC_iof.txt");
+//		List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
 		// 生成报告
-		ExcelHandle.writePyExcel(pyReport, Constant.fold_TextExcel + "flyme4_htc_liuwen_e.xls", 0);
-		ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
-		pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
-				+ "flyme5_htc_report.xls");
+		ExcelHandle.writePyExcel(pyReport, "E:\\3W_Apps\\flyme_app_report\\flyme5_MA01-HTC_iof\\flyme5_MA01_iof.xls", 0);
+//		ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
+//		pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
+//				+ "flyme5_htc_report.xls");
 
 	}
 }

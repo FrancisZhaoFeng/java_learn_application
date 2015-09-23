@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MainGet {
 	public static void main(String[] args) {
-		int num = 1;// 代表1轮测试，还是2轮测试
+		int num = 2;// 代表1轮测试，还是2轮测试
 		String meizuAutoTest = "";
 		if (num == 1)
 			meizuAutoTest = Constant.fold_MeizuAutoTest;

@@ -36,6 +36,40 @@ public class ReadFromFile {
 		}
 	}
 
+	public static void getFileListByPng(String baseFilePath, List<ApkName> listApkFName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			ApkName apkTemp = new ApkName();
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword)) {
+					ApkName an = new ApkName();
+					if (strName.indexOf("_") != -1) {
+						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
+					} else {
+						an.setSn(0);
+					}
+					boolean flag = false;
+					if (strName.contains("Crash_")) {
+						an.setName(an.getSn() + "_" + strName.subSequence(strName.indexOf("Crash_") + 6, strName.lastIndexOf("__2015")) + ".apk");
+					} else if (strName.contains("NotRespond_")) {
+						an.setName(an.getSn() + "_" + strName.subSequence(strName.indexOf("NotRespond_") + 11, strName.lastIndexOf("__2015")) + ".apk");
+					} else {
+						flag = true;
+					}
+					if (an.getName() != null && an.getName().equals(apkTemp.getName()))
+						continue;
+					System.out.println(an.getName());
+					if (!flag) {
+						listApkFName.add(an);
+						apkTemp = an;
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * 以字节为单位读取文件，常用于读二进制文件，如图片、声音、影像等文件。
 	 */

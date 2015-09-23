@@ -219,15 +219,20 @@ public class ExcelHandle {
 	 * @param readFailExcel
 	 *            用于最终验证，通过包名获取apk名字，从而将apk复制到本地进行最终验证
 	 */
-	public static void packageFindApkName(String serverPath, String readFailExcel) {
+	public static void packageFindApkName(String serverPath, boolean excelORFile, String readpath) {
 		List<ApkName> listApkFName = new ArrayList<ApkName>();
 		ReadFromFile.getFileList(serverPath, listApkFName, ".apk");
-		Sheet sheetFailExcel = readExcel(readFailExcel, 2);
 		List<String> name = new ArrayList<String>();
-		for (int i = 0; i < sheetFailExcel.getRows(); i++) {
-			Cell[] cell = sheetFailExcel.getRow(i);
-			name.add(cell[1].getContents());
+		if (excelORFile) {
+			Sheet sheetFailExcel = readExcel(readpath, 2);
+			for (int i = 0; i < sheetFailExcel.getRows(); i++) {
+				Cell[] cell = sheetFailExcel.getRow(i);
+				name.add(cell[1].getContents());
+			}
+		} else {
+			ReadFromFile.readFile(readpath, name);
 		}
+
 		for (String strName : name) {
 			boolean flag = false;
 			for (int i = 0; i < listApkFName.size(); i++) {
@@ -296,16 +301,17 @@ public class ExcelHandle {
 	 *            用于apk原始名字名称，找到其应用程序名（中文名）
 	 */
 	public static void findApkName(String readTopExcel, String readName) {
-		Sheet sheetTopExcel = readExcel(readTopExcel, 1);
+		Sheet sheetTopExcel = readExcel(readTopExcel, 0);
 		List<String> name = new ArrayList<String>();
 		ReadFromFile.readFile(readName, name);
 		for (String strName : name) {
 			boolean flag = false;
-			String strtemp = strName.substring(0, strName.indexOf(".apk"));
+			if (strName.indexOf(".apk") != -1)
+				strName = strName.substring(0, strName.indexOf(".apk"));
 			for (int i = 0; i < sheetTopExcel.getRows(); i++) {
 				Cell[] cell = sheetTopExcel.getRow(i);
-				if (cell[6].getContents().contains(strtemp)) {
-					System.out.println(cell[1].getContents() + "_" + strName);
+				if (cell[6].getContents().contains(strName)) {
+					System.out.println(cell[1].getContents() + "_" + strName + ".apk");
 					flag = true;
 					break;
 				}
@@ -419,13 +425,13 @@ public class ExcelHandle {
 		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelSecondRun();
 		// ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
-		// ExcelHandle.snFindID(Constant.excel_topapps, "D:\\temp.txt");
+		// ExcelHandle.snFindID(Constant.excel_topapps, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt", 3);
 		// ExcelHandle.snFindID(Constant.excel_topapps, Constant.txt_inexitApk);
-		// ExcelHandle.findApkName("E:\\3W_Apps\\top优质应用.xls", "D:\\temp.txt");
+		// ExcelHandle.packageFindApkName(Constant.serverPath, false, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt");
 		// ExcelHandle.genDownload(Constant.excel_topapps);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
-		ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
+		// ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
 	}
 
 }

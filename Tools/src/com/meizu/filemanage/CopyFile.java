@@ -1,6 +1,7 @@
 package com.meizu.filemanage;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,14 @@ public class CopyFile {
 	public static void copyFileTest() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> lFileName = new ArrayList<ApkName>();
-		List<ApkName> openFailName = new ArrayList<ApkName>();
+		List<ApkName> failName = new ArrayList<ApkName>();
 		// 初始化list
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
-		ReadFromFile.readAppTest("E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\flyme4_iof_liuwen.txt", openFailName);
+		ReadFromFile.readAppTest("C:\\Users\\zhaoguofeng\\Desktop\\temp.txt", failName);
 		// copy文件
-		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, openFailName);
+		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, failName);
 	}
+
 	/**
 	 * 执行复制操作的方法
 	 * 
@@ -55,13 +57,20 @@ public class CopyFile {
 	 * @param odFailName
 	 */
 	public static void copyApk(String serverPath, String failPath, List<ApkName> failName) {
-		try {
-			for (ApkName an : failName) {
+		for (ApkName an : failName) {
+			try {
 				if (!an.getName().contains(".apk")) {
 					System.out.println("没有进行copy：" + an.getSn());
 					continue;
 				}
-				FileInputStream in = new java.io.FileInputStream(serverPath + an.getName());
+				FileInputStream in;
+				try {
+					in = new java.io.FileInputStream(serverPath + an.getName());
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					continue;
+				}
 				FileOutputStream out = new FileOutputStream(failPath + an.getName());
 				byte[] bt = new byte[1024];
 				int count;
@@ -70,11 +79,12 @@ public class CopyFile {
 				}
 				in.close();
 				out.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				continue;
 			}
-			System.out.println("完成：" + failPath);
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			// TODO: handle exception
 		}
+		System.out.println("完成：" + failPath);
 	}
 }

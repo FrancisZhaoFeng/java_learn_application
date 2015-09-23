@@ -24,8 +24,7 @@ public class Tools {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
 		String yesterday = new SimpleDateFormat("yyyy-MM-dd ").format(cal.getTime());
-		// return yesterday.trim();
-		return "2015-09-02";
+		 return yesterday.trim();
 	}
 
 	public static void gAllFold() {

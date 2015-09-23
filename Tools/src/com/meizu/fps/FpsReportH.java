@@ -56,8 +56,9 @@ public class FpsReportH {
 	}
 
 	public static void main(String[] args) {
-		String strReadExcel = "e:\\20150821.xls";
-		String strWriteExcel = "e:\\20150821-w.xls";
+		String filepath = "E:\\fps-M76";
+		String strReadExcel = filepath + ".xls";
+		String strWriteExcel = filepath + "_done.xls";
 		Sheet sheet = ExcelHandle.readExcel(strReadExcel, 0);
 		new FpsReportH().writeExcel(strWriteExcel, sheet);
 	}
