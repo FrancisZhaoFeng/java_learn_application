@@ -250,7 +250,7 @@ public class ExcelHandle {
 	/**
 	 * @param readTopExcel
 	 * @param readFailExcel
-	 *            通过应用程序名（中文名），找到其包名，用于开始报告只统计应用程序名（中文名），后需求更改为：应用程序名（中文名）+包名
+	 *            通过应用程序名（中文名或包名），找到其包名，用于开始报告只统计应用程序名（中文名），后需求更改为：应用程序名（中文名）+包名
 	 */
 	public static void nameFindPackage(String readTopExcel, String readFailExcel, int type) {
 		Sheet sheetTopExcel = readExcel(readTopExcel, 0);
@@ -384,6 +384,8 @@ public class ExcelHandle {
 	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		List<ApkName> lApkName = new ArrayList<ApkName>();
 		ReadFromFile.readAppTest(readText, lApkName);
+		// List<String> lApkName = new ArrayList<String>();
+		// ReadFromFile.readFile(readText, lApkName);
 		try {
 			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 			if (readText.contains("Install"))
@@ -396,7 +398,7 @@ public class ExcelHandle {
 				for (int i = minIndex; i <= maxIndex; i++) {
 					Cell[] cell = sheet.getRow(i);
 					if (cell[3].getContents().equals(pName)) {
-						System.out.println(cell[2].getContents() + "&~&" + pName);
+						System.out.println(i + "&~&" + cell[2].getContents() + "&~&" + pName);
 					}
 				}
 			}
@@ -404,7 +406,6 @@ public class ExcelHandle {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -417,21 +418,20 @@ public class ExcelHandle {
 		else {
 			ExcelHandle.genExcelSecondRun();
 		}
-
 	}
 
 	public static void main(String args[]) {
 		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelSecondRun();
-		// ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
+		ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
 		// ExcelHandle.snFindID(Constant.excel_topapps, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt", 3);
 		// ExcelHandle.snFindID(Constant.excel_topapps, Constant.txt_inexitApk);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, false, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt");
 		// ExcelHandle.genDownload(Constant.excel_topapps);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
-		// ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
+		ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
 	}
 
 }

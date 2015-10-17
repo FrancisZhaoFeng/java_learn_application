@@ -2,6 +2,9 @@ package com.meizu.fps;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -12,7 +15,9 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
+import com.meizu.filemanage.ApkName;
 import com.meizu.filemanage.ExcelHandle;
+import com.meizu.filemanage.ReadFromFile;
 
 public class FpsReportH {
 	public void writeExcel(String writeExcel, Sheet sheet) {
@@ -56,10 +61,16 @@ public class FpsReportH {
 	}
 
 	public static void main(String[] args) {
-		String filepath = "E:\\fps-M76";
-		String strReadExcel = filepath + ".xls";
-		String strWriteExcel = filepath + "_done.xls";
-		Sheet sheet = ExcelHandle.readExcel(strReadExcel, 0);
-		new FpsReportH().writeExcel(strWriteExcel, sheet);
+		String filepath = "C:\\Users\\zhaoguofeng\\Desktop\\fps\\";
+		List<String> lFileName = new ArrayList<String>();
+		ReadFromFile.getFileListNormal(filepath, lFileName, "*");
+		for (String fileName : lFileName) {
+			String newName = fileName.replace(".xls", "_done.xls");
+			String strReadExcel = filepath + fileName;
+			String strWriteExcel = filepath + newName;
+			Sheet sheet = ExcelHandle.readExcel(strReadExcel, 0);
+			new FpsReportH().writeExcel(strWriteExcel, sheet);
+		}
+
 	}
 }

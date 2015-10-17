@@ -1,5 +1,6 @@
 package com.meizu.filemanage;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,10 +57,7 @@ public class WriteToFile {
 				}
 				apkSize[an.getSn()] = 1;
 				name += "\r\n";
-				// if (!name.contains("AppTestCase")) {
-				// fosInstallSussess.write(name.getBytes());
-				// } else
-				if (name.contains("APK安装失败")) {
+				if (name.contains("安装失败")) {
 					int index = 0;
 					String apkPName;
 					if (name.contains("-->")) {
@@ -80,7 +78,8 @@ public class WriteToFile {
 				}
 			}
 			System.out.println("此次测试最小值：" + minIndex + "\n此次测试最大值：" + maxIndex);
-			minIndex = ReadFromFile.readFileGetMin(Constant.localYesPath);
+			if (new File(Constant.localYesPath).exists())
+				minIndex = ReadFromFile.readFileGetMin(Constant.localYesPath);
 			System.out.println("昨天最大值为：" + minIndex + "\n共：" + (maxIndex - minIndex));
 			// 将下载失败的与服务器上的apk对比，并已apk名称形式保存
 			for (int i = minIndex + 1; i <= maxIndex; i++) {

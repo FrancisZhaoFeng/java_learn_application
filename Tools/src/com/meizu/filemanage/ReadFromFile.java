@@ -15,14 +15,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReadFromFile {
-
 	public static void getFileList(String baseFilePath, List<ApkName> listApkFName, String keyword) {
 		File file = new File(baseFilePath);
 		File[] filesName = file.listFiles();
 		if (filesName != null && file.exists()) {
 			for (File fileName : filesName) {
 				String strName = fileName.getName().toString();
-				if (strName.trim().endsWith(keyword)) {
+				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					ApkName an = new ApkName();
 					an.setName(strName);
 					if (strName.indexOf("_") != -1) {
@@ -31,6 +30,19 @@ public class ReadFromFile {
 						an.setSn(0);
 					}
 					listApkFName.add(an);
+				}
+			}
+		}
+	}
+
+	public static void getFileListNormal(String baseFilePath, List<String> listName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
+					listName.add(strName);
 				}
 			}
 		}
@@ -184,14 +196,14 @@ public class ReadFromFile {
 			while ((tempString = reader.readLine()) != null) {
 				ApkName an = new ApkName();
 				// 显示行号
-				if (!tempString.contains("Crash") && !tempString.contains("版本号") && !tempString.contains("NotRespond") && !tempString.contains("异常获取")) {
+				if (!tempString.contains("Crash") && !tempString.contains("版本号") && !tempString.contains("NotRespond")) {
 					int indexNum = 0, index_ = 0;
 					Pattern patternFristChar = Pattern.compile("[0-9]");
 					Pattern patternLetter = Pattern.compile("[A-Z]");
 					Matcher matcher = patternFristChar.matcher(tempString);
 					if (matcher.find())
 						indexNum = tempString.indexOf(matcher.group());
-					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {//
+					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {
 						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
 						if (!patternLetter.matcher(tempString.substring(indexNum, index_)).find()) {
 							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
@@ -218,7 +230,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public static void readFile(String fileName, List<String> apkName) {
+	public static boolean readFile(String fileName, List<String> apkName) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -240,6 +252,7 @@ public class ReadFromFile {
 				}
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -331,11 +344,35 @@ public class ReadFromFile {
 		}
 	}
 
-	// public static void main(String[] args) {
-	// String fileName = "C:/temp/newTemp.txt";
-	// ReadFromFile.readFileByBytes(fileName);
-	// ReadFromFile.readFileByChars(fileName);
-	// ReadFromFile.readFileByLines(fileName);
-	// ReadFromFile.readFileByRandomAccess(fileName);
-	// }
+	/** */
+	/**
+	 * 文件重命名
+	 * 
+	 * @param path
+	 *            文件目录
+	 * @param oldname
+	 *            原来的文件名
+	 * @param newname
+	 *            新文件名
+	 */
+	public static void renameFile(String path, String oldname, String newname) {
+		if (!oldname.equals(newname)) {// 新的文件名和以前文件名不同时,才有必要进行重命名
+			File oldfile = new File(path + oldname);
+			File newfile = new File(path + newname);
+			if (!oldfile.exists()) {
+				return;// 重命名文件不存在
+			}
+			if (newfile.exists())// 若在该目录下已经有一个文件和新文件名相同，则不允许重命名
+				System.out.println(newname + "已经存在！");
+			else {
+				oldfile.renameTo(newfile);
+			}
+		} else {
+			System.out.println("新文件名和旧文件名相同...");
+		}
+	}
+
+	public static void main(String args[]) {
+		ReadFromFile.renameFile("E:\\3W_Apps\\temp\\oldtemp\\", "Crash_baidumapsdk.demo222_MA01_20151016160606.png", "123_Crash_baidumapsdk.demo222_MA01_20151016160606.png");
+	}
 }

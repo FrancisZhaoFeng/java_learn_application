@@ -146,14 +146,15 @@ public class PyReportHandle {
 	}
 
 	public static void main(String[] args) {
+		String readFileName = "flyme5_MA01F_HTCP";
 		PyReportHandle pyReportHandle = new PyReportHandle();
-		List<ReportInfo> pyReport = pyReportHandle.getPythonInfo("E:\\3W_Apps\\flyme_app_report\\flyme5_MA01-HTC_iof\\flyme5_MA01-HTC_iof.txt");
-//		List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
+		List<ReportInfo> pyReport = pyReportHandle.getPythonInfo(Constant.fold_TextExcel + readFileName);
+		// List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
 		// 生成报告
-		ExcelHandle.writePyExcel(pyReport, "E:\\3W_Apps\\flyme_app_report\\flyme5_MA01-HTC_iof\\flyme5_MA01_iof.xls", 0);
-//		ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
-//		pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
-//				+ "flyme5_htc_report.xls");
+		ExcelHandle.writePyExcel(pyReport, Constant.fold_TextExcel + readFileName + ".xls", 0);
+		// ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
+		// pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
+		// + "flyme5_htc_report.xls");
 
 	}
 }
