@@ -181,7 +181,7 @@ public class ExcelHandle {
 	public static void snFindID(String readExcel, String readFile, int type) {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
-		ReadFromFile.readAppTest(readFile, apkName);
+		ReadFromFile.genAppListFromTxt(readFile, apkName);
 		String typeName = "";
 		for (ApkName an : apkName) {
 			Cell[] cell = sheet.getRow(an.getSn() - 1);
@@ -329,7 +329,7 @@ public class ExcelHandle {
 	 */
 	public static void genExecl(String readExcel, String writeFile, String readFailFile) {
 		List<ApkName> failName = new ArrayList<ApkName>();
-		ReadFromFile.readAppTest(readFailFile, failName);//
+		ReadFromFile.genAppListFromTxt(readFailFile, failName);//
 		OutputStream os;
 		try {
 			os = new FileOutputStream(writeFile);
@@ -338,16 +338,53 @@ public class ExcelHandle {
 			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
 			for (int i = 0; i < failName.size(); i++) {
 				ApkName an = failName.get(i);
-				Cell[] cell = sheet.getRow(an.getSn() - 1);
-				for (int j = 0; j < cell.length + 1; j++) {
-					if (j == 0) {
-						ws.addCell(new Number(j, i, an.getSn()));
-					} else if (j == 1 || j == 2) {
-						ws.addCell(new Number(j, i, Integer.parseInt(cell[j - 1].getContents())));
+				Cell[] cell = sheet.getRow(an.getSn());
+				for (int j = 0; j < cell.length; j++) {
+					if (j == 0 || j == 2 || j == 5) {
+						ws.addCell(new Number(j, i, Integer.parseInt(cell[j].getContents())));
 					} else {
-						ws.addCell(new Label(j, i, cell[j - 1].getContents()));
+						ws.addCell(new Label(j, i, cell[j].getContents()));
 					}
+
 				}
+			}
+			wwb.write();
+			wwb.close();
+			System.out.println("成功生成excel文件：" + writeFile);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void genExeclDownload(String readExcel, String writeFile, String readFailFile) {
+		List<ApkName> failName = new ArrayList<ApkName>();
+		ReadFromFile.genAppListFromTxt(readFailFile, failName);
+		OutputStream os;
+		int iSheet = 0;
+		WritableSheet ws;
+		try {
+			os = new FileOutputStream(writeFile);
+			WritableWorkbook wwb = Workbook.createWorkbook(os);
+			ws = wwb.createSheet("Test Sheet" + iSheet, iSheet);
+			Sheet sheet = ExcelHandle.readExcel(readExcel, 0);
+			for (int i = 0; i < failName.size(); i++) {
+				if (i / 100 != iSheet) {
+					iSheet++;
+					ws = wwb.createSheet("Test Sheet" + iSheet, iSheet);
+				}
+
+				ApkName an = failName.get(i);
+				Cell[] cell = sheet.getRow(an.getSn());
+				for (int j = 0; j < cell.length; j++) {
+					if (j == 0 || j == 2 || j == 5) {
+						ws.addCell(new Number(j, i % 100, Integer.parseInt(cell[j].getContents())));
+					} else {
+						ws.addCell(new Label(j, i % 100, cell[j].getContents()));
+					}
+
+				}
+
 			}
 			wwb.write();
 			wwb.close();
@@ -383,7 +420,7 @@ public class ExcelHandle {
 	 */
 	public static void getNameByPackage(String readExcel, String readText, int minIndex, int maxIndex) {
 		List<ApkName> lApkName = new ArrayList<ApkName>();
-		ReadFromFile.readAppTest(readText, lApkName);
+		ReadFromFile.genAppListFromTxt(readText, lApkName);
 		// List<String> lApkName = new ArrayList<String>();
 		// ReadFromFile.readFile(readText, lApkName);
 		try {
@@ -424,14 +461,15 @@ public class ExcelHandle {
 		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelFristRun();
 		// ExcelHandle.copyExcelSecondRun();
-		ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
+		// ExcelHandle.getNameByPackage(Constant.excel_topapps, Constant.txt_openFail, 17541, 22541);
 		// ExcelHandle.snFindID(Constant.excel_topapps, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt", 3);
 		// ExcelHandle.snFindID(Constant.excel_topapps, Constant.txt_inexitApk);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, false, "C:\\Users\\zhaoguofeng\\Desktop\\temp.txt");
 		// ExcelHandle.genDownload(Constant.excel_topapps);
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 		// ExcelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
-		ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
+		// ExcelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
+		ExcelHandle.genExeclDownload(Constant.excel_topapps, Constant.excel_analysisFail, "D:\\analysisFail.txt");
 	}
 
 }

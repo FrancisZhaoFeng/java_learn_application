@@ -10,7 +10,8 @@ import com.meizu.filemanage.Constant;
 
 public class Tools {
 	public static void main(String[] args) {
-		Tools.gAllFold();
+		Tools.genServerFold();
+		Tools.genLocalFold();
 	}
 
 	public static String getDate() {
@@ -27,20 +28,37 @@ public class Tools {
 		return yesterday.trim();
 	}
 
-	public static void gAllFold() {
+	public static void genLocalFold() {
 		Tools.generateFold(Constant.localPath);
 		Tools.generateFold(Constant.fold_MeizuAutoTest);
+		Tools.generateFold(Constant.fold_analysisFail);
 		Tools.generateFold(Constant.fold_downloadFail);
 		Tools.generateFold(Constant.fold_installFail);
 		Tools.generateFold(Constant.fold_openFail);
+		Tools.generateFold(Constant.fold_allFail);
 		Tools.generateFold(Constant.fold_TextExcel);
-		// Tools.generateFold(Constant.excel_downloadFail);
-		// Tools.generateFold(Constant.excel_installFail);
-		// Tools.generateFold(Constant.excel_openFail);
 		// 二轮测试
 		Tools.generateFold(Constant.fold_secondRun);
 		Tools.generateFold(Constant.fold_srMeizuAutoTest);
-		// Tools.generateFold(Constant.excel_srPackageError);
+	}
+	
+	public static void genServerFold() {
+		//第一轮
+		Tools.generateFold(Constant.fold_sF_allFailApk);
+		Tools.generateFold(Constant.fold_sF_crashFailLog);
+		Tools.generateFold(Constant.fold_sF_installFailLog);
+		Tools.generateFold(Constant.fold_sF_openFailLog);
+		Tools.generateFold(Constant.fold_sF_testReport);
+		//第二轮
+		Tools.generateFold(Constant.fold_sS_crashFailLog);
+		Tools.generateFold(Constant.fold_sS_installFailLog);
+		Tools.generateFold(Constant.fold_sS_openFailLog);
+		Tools.generateFold(Constant.fold_sS_testReport);
+		
+		Tools.generateFold(Constant.fold_sS_crashFailApk);
+		Tools.generateFold(Constant.fold_sS_installFailApk);
+		Tools.generateFold(Constant.fold_sS_openFailApk);
+		System.out.println("生成文件夹成功");
 	}
 
 	public static void generateFold(String filePath) {

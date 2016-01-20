@@ -10,9 +10,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.catalina.Contained;
 
 public class ReadFromFile {
 	public static void getFileList(String baseFilePath, List<ApkName> listApkFName, String keyword) {
@@ -24,6 +28,7 @@ public class ReadFromFile {
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					ApkName an = new ApkName();
 					an.setName(strName);
+					an.setfName(strName);
 					if (strName.indexOf("_") != -1) {
 						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
 					} else {
@@ -43,6 +48,7 @@ public class ReadFromFile {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					listName.add(strName);
+					// System.out.println(strName);
 				}
 			}
 		}
@@ -184,7 +190,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public static void readAppTest(String fileName, List<ApkName> apkName) {
+	public static void genAppListFromTxt(String fileName, List<ApkName> apkName) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -225,6 +231,140 @@ public class ReadFromFile {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 以行为单位读取文件，常用于读面向行的格式化文件
+	 */
+	public static void genAppListFromHtml(String fileName) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			// System.out.println("以行为单位读取文件内容，一次读一整行：" + fileName);
+			reader = new BufferedReader(new FileReader(file));
+			String strTemp = null;
+			int type = 0;
+			// 一次读入一行，直到读入null为文件结束
+			while ((strTemp = reader.readLine()) != null) {
+				ApkName an = new ApkName();
+				// 显示行号
+				if (strTemp.contains("Get Package Name Failed")) {// 根据类型保存数据
+					type = 1;
+				} else if (strTemp.contains("Install Test Failed")) {
+					type = 2;
+				} else if (strTemp.contains("Open Test Failed")) {
+					type = 3;
+				}
+				Pattern pattern = Pattern.compile("\\d{1,5}_.*.apk");
+				Matcher matcher = pattern.matcher(strTemp);
+				if (matcher.find()) {
+					String fName = matcher.group();
+					an.setSn(Integer.valueOf(fName.split("_")[0]));
+					an.setName(fName.substring(fName.indexOf("_") + 1));
+					an.setfName(fName);
+					Constant.allApkName.add(an);
+					switch (type) {
+					case 1:
+						Constant.analysisFApkName.add(an);
+						break;
+					case 2:
+						Constant.installFApkName.add(an);
+						break;
+					case 3:
+						Constant.openFApkName.add(an);
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	public static void genAppAnalysisListFromHtml(String fileName) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String strTemp = null;
+			// 一次读入一行，直到读入null为文件结束
+			while ((strTemp = reader.readLine()) != null) {
+				ApkName an = new ApkName();
+				// 显示行号
+				if (strTemp.contains("Install Test Failed")) {
+					continue;
+				} else if (strTemp.contains("Open Test Failed")) {
+					continue;
+				}
+				Pattern pattern = Pattern.compile("\\d{1,5}_.*.apk");
+				Matcher matcher = pattern.matcher(strTemp);
+				if (matcher.find()) {
+					String fName = matcher.group();
+					an.setSn(Integer.valueOf(fName.split("_")[0]));
+					an.setName(fName.substring(fName.indexOf("_") + 1));
+					an.setfName(fName);
+					Constant.analysisFApkName.add(an);
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	public static void genAppListFromFolder(int num) {
+		String installFailPath = "", openFailPath = "";
+		if (num == 1) {
+			installFailPath = Constant.fold_sF_installFailLog;
+			openFailPath = Constant.fold_sF_openFailLog;
+		} else {
+			installFailPath = Constant.fold_sS_installFailLog;
+			openFailPath = Constant.fold_sS_openFailLog;
+		}
+		List<String> fInstallFail = new ArrayList<String>();
+		List<String> fOpenFail = new ArrayList<String>();
+		getFileListNormal(installFailPath, fInstallFail, "txt");
+		getFileListNormal(openFailPath, fOpenFail, "txt");
+		for (String strFail : fInstallFail) {
+			ApkName an = new ApkName();
+			strFail = strFail.replace(".txt", ".apk");
+			an.setSn(Integer.valueOf(strFail.split("_")[0]));
+			an.setName(strFail.substring(strFail.indexOf("_") + 1));
+			an.setfName(strFail);
+			Constant.installFApkName.add(an);
+		}
+		for (String strFail : fOpenFail) {
+			ApkName an = new ApkName();
+			strFail = strFail.replace(".txt", ".apk");
+			an.setSn(Integer.valueOf(strFail.split("_")[0]));
+			an.setName(strFail.substring(strFail.indexOf("_") + 1));
+			an.setfName(strFail);
+			Constant.openFApkName.add(an);
+		}
+		if (num == 1) {
+			Constant.allApkName.addAll(Constant.installFApkName);
+			Constant.allApkName.addAll(Constant.openFApkName);
+		}
+		Collections.sort(Constant.installFApkName);
+		Collections.sort(Constant.openFApkName);
 	}
 
 	/**

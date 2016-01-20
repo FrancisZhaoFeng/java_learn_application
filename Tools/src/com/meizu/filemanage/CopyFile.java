@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,15 @@ public class CopyFile {
 		// CopyFile.copyFileTest();
 		// CopyFile.copyByNumber();
 		// CopyFile.handleReName();
-		ReadFromFile.renameFile("E:\\3W_Apps\\temp\\oldtemp\\", "Crash_baidumapsdk.demo222_MA01_20151016160606.png", "123_Crash_baidumapsdk.demo222_MA01_20151016160606.png");
+		// ReadFromFile.renameFile("E:\\3W_Apps\\temp\\oldtemp\\", "Crash_baidumapsdk.demo222_MA01_20151016160606.png",
+		// "123_Crash_baidumapsdk.demo222_MA01_20151016160606.png");
+		List<ApkName> lFileName = new ArrayList<ApkName>();
+		ReadFromFile.getFileList(Constant.serverApkPath127, lFileName, ".apk");
+		System.out.println(lFileName.size());
+		Collections.sort(lFileName);
+		lFileName = lFileName.subList(18001+250, 21000);
+		System.out.println(lFileName.size()+","+lFileName.get(0)+","+lFileName.get(lFileName.size()-1));
+		CopyFile.copyApk(Constant.serverApkPath127, "D:\\3w_app_18001-21000\\", lFileName);
 	}
 
 	/**
@@ -29,9 +38,9 @@ public class CopyFile {
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
 		// 初始化list
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
-		ReadFromFile.readAppTest(Constant.txt_openFail, openFailName);
-		ReadFromFile.readAppTest(Constant.txt_installFail, installFailName);
-		ReadFromFile.readAppTest(Constant.txt_downloadFail, downloadFailName);
+		ReadFromFile.genAppListFromTxt(Constant.txt_openFail, openFailName);
+		ReadFromFile.genAppListFromTxt(Constant.txt_installFail, installFailName);
+		ReadFromFile.genAppListFromTxt(Constant.txt_downloadFail, downloadFailName);
 		// copy文件
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, openFailName);
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_installFail, installFailName);
@@ -41,13 +50,13 @@ public class CopyFile {
 	/**
 	 * 用于自由的copy文件
 	 */
-	public static void copyFileTest() {
+	public static void copyFileTxt() {
 		// 定义list：服务器文件名；打开下载失败文件名；安装失败文件名
 		List<ApkName> lFileName = new ArrayList<ApkName>();
 		List<ApkName> failName = new ArrayList<ApkName>();
 		// 初始化list
 		ReadFromFile.getFileList(Constant.serverPath, lFileName, ".apk");
-		ReadFromFile.readAppTest("E:\\3W_Apps\\2015-10-15\\fold_TextExcel\\txt_openFail.txt", failName);
+		ReadFromFile.genAppListFromTxt("E:\\3W_Apps\\2015-10-15\\fold_TextExcel\\txt_openFail.txt", failName);
 		// copy文件
 		CopyFile.copyApk(Constant.serverPath, Constant.fold_openFail, failName);
 	}
@@ -71,19 +80,19 @@ public class CopyFile {
 	public static void copyApk(String serverPath, String failPath, List<ApkName> failName) {
 		for (ApkName an : failName) {
 			try {
-				if (!an.getName().contains(".apk")) {
-					System.out.println("没有进行copy：" + an.getSn());
+				if (!an.getfName().contains(".apk")) {
+					System.out.println("没有进行copy：" + an.getfName());
 					continue;
 				}
 				FileInputStream in;
 				try {
-					in = new java.io.FileInputStream(serverPath + an.getName());
+					in = new java.io.FileInputStream(serverPath + an.getfName());
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
-				FileOutputStream out = new FileOutputStream(failPath + an.getName());
+				FileOutputStream out = new FileOutputStream(failPath + an.getfName());
 				byte[] bt = new byte[1024];
 				int count;
 				while ((count = in.read(bt)) > 0) {
@@ -124,7 +133,7 @@ public class CopyFile {
 				else
 					newName = strName;
 				FileOutputStream out = new FileOutputStream("E:\\3W_Apps\\temp\\newtemp\\" + newName);
-				byte[] bt = new byte[1024];
+				byte[] bt = new byte[2048];
 				int count;
 				while ((count = in.read(bt)) > 0) {
 					out.write(bt, 0, count);

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainGet {
+public class MainMeizuClient {
 	public static void main(String[] args) {
 		int num = 1;// 代表1轮测试，还是2轮测试
 		String meizuAutoTest = "";
@@ -21,7 +21,7 @@ public class MainGet {
 		// 显示文件内容
 		ReadFromFile.getFileList(meizuAutoTest, lFileName, ".txt");
 		for (ApkName strFileName : lFileName)
-			ReadFromFile.readAppTest(meizuAutoTest + strFileName.getName(), apkName);
+			ReadFromFile.genAppListFromTxt(meizuAutoTest + strFileName.getName(), apkName);
 		Collections.sort(apkName);
 		String indexRange = WriteToFile.writeRun(apkName, num);
 		ExcelHandle.genExcel(num);
