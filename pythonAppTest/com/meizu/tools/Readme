@@ -1,0 +1,9 @@
+#使用方法
+1、配置AAPT、adb环境变量，
+2、设置Log路径，即LOG_PATH,如:LOG_PATH="/home/ef-tanshucheng/log/"
+3、设置init文件路径，即INIT_PATH，这个init文件路径跟monkey.py在同一个目录下，如：INIT_PATH="/home/ef-tanshucheng/workspace/Pythonworkspace/success/"
+4、设置apk路径,即APK_PATH,如APK_PATH="/home/ef-tanshucheng/Desktop/apk_"
+5、运行python脚本
+
+注：注意路径后面是否有'/'(window下面是'\')
+    在运行过程中要保持手机亮屏解锁状态，如果需要这个可以在下个版本中实现
