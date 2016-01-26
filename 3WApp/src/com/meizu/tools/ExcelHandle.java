@@ -371,7 +371,7 @@ public class ExcelHandle {
 		OutputStream os;
 		int iSheet = 0;
 		WritableSheet ws;
-		int sheetNum = 140;
+		int sheetNum = 173;
 		try {
 			os = new FileOutputStream(writeFile);
 			WritableWorkbook wwb = Workbook.createWorkbook(os);
@@ -382,9 +382,8 @@ public class ExcelHandle {
 					iSheet++;
 					ws = wwb.createSheet("Test Sheet" + iSheet, iSheet);
 				}
-
 				ApkName an = failName.get(i);
-				Cell[] cell = sheet.getRow(an.getSn());
+				Cell[] cell = sheet.getRow(an.getSn() - 1);
 				for (int j = 0; j < cell.length; j++) {
 					if (j == 0 || j == 2 || j == 5) {
 						ws.addCell(new Number(j, i % sheetNum, Integer.parseInt(cell[j].getContents())));
@@ -479,7 +478,8 @@ public class ExcelHandle {
 		// excelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\temp.xls");
 		// excelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
 		// excelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
-		excelHandle.genExecl(Constant.excel_topapps, Constant.excel_inexitApk, Constant.txt_inexitApk);
+		excelHandle.genExeclDownload(Constant.excel_topapps, Constant.excel_analysisFail, "D:\\analysisFail.txt");
+		// excelHandle.genExecl(Constant.excel_topapps, Constant.excel_inexitApk, Constant.txt_inexitApk);
 	}
 
 }

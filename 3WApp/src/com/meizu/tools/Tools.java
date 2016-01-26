@@ -10,8 +10,8 @@ import contants.Constant;
 
 public class Tools {
 	public static void main(String[] args) {
-		Tools.genServerFold();
-		// Tools.genLocalFold();
+		// Tools.genServerFold();
+		Tools.genLocalFold();
 	}
 
 	public static String getDate() {

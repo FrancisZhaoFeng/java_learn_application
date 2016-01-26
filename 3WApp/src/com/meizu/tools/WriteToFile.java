@@ -202,7 +202,7 @@ public class WriteToFile {
 	public void serverFindInexid() {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		List<ApkName> inexitName = new ArrayList<ApkName>();
-		readFromFile.getApkList(Constant.serverPath, apkName, "apk");
+		ReadFromFile.getApkList(Constant.serverApkPath127, apkName, "apk");
 		int maxIndex = 0;
 		int[] lApk = new int[9999999];
 		for (ApkName an : apkName) {
