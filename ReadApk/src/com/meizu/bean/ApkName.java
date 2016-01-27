@@ -2,8 +2,11 @@ package com.meizu.bean;
 
 import java.util.List;
 
-public class ApkInfo {
+public class ApkName  implements Comparable<ApkName>{
 
+	private int sn;
+	private String name;
+	private String fName;
 	private String versionCode;
 	private String versionName;
 	private String apkPackage;
@@ -12,7 +15,7 @@ public class ApkInfo {
 	private List<?> uses_permission;
 	private List<?> activitys;
 
-	public ApkInfo() {
+	public ApkName() {
 		versionCode = null;
 		versionName = null;
 		apkPackage = null;
@@ -21,6 +24,44 @@ public class ApkInfo {
 		uses_permission = null;
 		activitys = null;
 	}
+	
+	
+
+	public Integer getSn() {
+		return sn;
+	}
+
+
+
+	public void setSn(int sn) {
+		this.sn = sn;
+	}
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+	public String getfName() {
+		return fName;
+	}
+
+
+
+	public void setfName(String fName) {
+		this.fName = fName;
+	}
+
+
 
 	public String getVersionCode() {
 		return versionCode;
@@ -80,5 +121,11 @@ public class ApkInfo {
 
 	public String toString() {
 		return "ApkInfo[" + "apkPackage:" + apkPackage + ",versionCode:" + versionCode + ",versionName:" + versionName + "]\n" + "Activity[" + activitys.toString() + "]";
+	}
+	
+	@Override
+	public int compareTo(ApkName arg0) {
+		// TODO Auto-generated method stub
+		return this.getSn().compareTo(arg0.getSn());
 	}
 }

@@ -13,21 +13,21 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
-import com.meizu.bean.ApkInfo;
+import com.meizu.bean.ApkName;
 
 public class ApkUtil {
 
 	private final Namespace NS = Namespace.getNamespace("http://schemas.android.com/apk/res/android");
 
-	public ApkInfo getApkInfo(String apkPath) {
-		ApkInfo apkInfo = new ApkInfo();
+	public ApkName getApkInfo(String apkPath) {
+		ApkName apkInfo = new ApkName();
 		SAXBuilder builder = new SAXBuilder();
 		Document document = null;
 		try {
 			document = builder.build(getXmlInputStream(apkPath));
 		} catch (Exception e) {
-			// e.printStackTrace();
-			return null;
+			e.printStackTrace();
+			// return null;
 		}
 		Element root = document.getRootElement();// 跟节点-->manifest
 		apkInfo.setApkName(root.getAttributeValue("package"));
@@ -35,7 +35,7 @@ public class ApkUtil {
 		return apkInfo;
 	}
 
-	private void getActivity(Element root, ApkInfo apkInfo) {
+	private void getActivity(Element root, ApkName apkInfo) {
 		Element element = root.getChild("application");
 		List<?> activity = element.getChildren("activity");// 子节点-->uses-sdk
 		List<String> activitys = new ArrayList<String>();
@@ -47,7 +47,7 @@ public class ApkUtil {
 	}
 
 	@SuppressWarnings("unused")
-	private void getUsesPer(Element root, ApkInfo apkInfo) {
+	private void getUsesPer(Element root, ApkName apkInfo) {
 		apkInfo.setVersionCode(root.getAttributeValue("versionCode", NS));
 		apkInfo.setVersionName(root.getAttributeValue("versionName", NS));
 		Element elemUseSdk = root.getChild("uses-sdk");// 子节点-->uses-sdk
@@ -59,6 +59,19 @@ public class ApkUtil {
 			permissions.add(permission);
 		}
 		apkInfo.setUses_permission(permissions);
+	}
+
+	@SuppressWarnings("resource")
+	public boolean apkUsable(String apkPath) {
+		ZipFile zipFile = null;
+		boolean flag = false;
+		try {
+			zipFile = new ZipFile(apkPath);
+			if (zipFile != null)
+				flag = true;
+		} catch (IOException e) {
+		}
+		return flag;
 	}
 
 	private InputStream getXmlInputStream(String apkPath) {

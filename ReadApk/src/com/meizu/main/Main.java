@@ -1,9 +1,11 @@
 package com.meizu.main;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import com.meizu.bean.ApkInfo;
+import com.meizu.bean.ApkName;
 import com.meizu.tools.Constant;
 import com.meizu.tools.ReadFromFile;
 import com.meizu.util.ApkUtil;
@@ -13,18 +15,40 @@ public class Main {
 	public static void main(String args[]) {
 		ReadFromFile readFromFile = new ReadFromFile();
 		ApkUtil apkUtil = new ApkUtil();
+		// String apkPath = "C:\\Users\\zhaoguofeng\\Desktop\\bad apk\\analysis\\";
+		// String apkPath = "\\\\172.16.11.127\\解析失败\\";
+		String apkPath = "\\\\172.16.11.127\\FailApp\\";
+		// String apkPath = Constant.serverApkPath127;
 
-		List<String> listApkNames = new ArrayList<String>();
-		List<ApkInfo> listApkInfos = new ArrayList<ApkInfo>();
-		readFromFile.getFileList(Constant.serverApkPath127, listApkNames, "*");// Constant.serverApkPath127
-		for (String strApkName : listApkNames) {
-			ApkInfo apkInfo = apkUtil.getApkInfo(Constant.serverApkPath127 + strApkName);
-			if (apkInfo == null) {
-				System.out.println(strApkName);
-				listApkInfos.add(apkInfo);
+		List<ApkName> listApkNames = new ArrayList<ApkName>();
+		ReadFromFile.getApkList(apkPath, listApkNames, ".apk");
+		Collections.sort(listApkNames);
+		int num = 0;
+		for (ApkName apkName : listApkNames) {
+			if (!apkUtil.apkUsable(apkPath + apkName.getfName())) {
+				System.out.println(apkName.getfName());
+				// Main.deleteFile(apkPath + apkName.getfName());
+				num++;
 			}
 		}
-		// apkUtil.getApkInfo("E:\\3W_Apps\\flyme5_M85_iof\\49_com.tencent.qqpimsecure.apk");
-		System.out.println("finish~~~~,size:" + listApkInfos.size());
+		System.out.println("finish~~~~,error size:" + num);
 	}
+
+	public static boolean deleteFile(String fileName) {
+		File file = new File(fileName);
+		// 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+		if (file.exists() && file.isFile()) {
+			if (file.delete()) {
+				System.out.println("删除单个文件" + fileName + "成功！");
+				return true;
+			} else {
+				System.out.println("删除单个文件" + fileName + "失败！");
+				return false;
+			}
+		} else {
+			System.out.println("删除单个文件失败：" + fileName + "不存在！");
+			return false;
+		}
+	}
+
 }

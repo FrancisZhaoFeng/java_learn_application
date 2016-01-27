@@ -14,11 +14,18 @@ import contants.Constant;
  * @author zhaoguofeng 根据文件信息，从服务器中copy apk文件到本地目录
  */
 public class CopyFile {
-	ReadFromFile readFromFile = new ReadFromFile();
+	static ReadFromFile readFromFile = new ReadFromFile();
+	static CopyFile copyFile = new CopyFile();
 
 	public static void main(String[] args) {
-		ReadFromFile readFromFile = new ReadFromFile();
-		readFromFile.renameFile("E:\\3W_Apps\\temp\\oldtemp\\", "Crash_baidumapsdk.demo222_MA01_20151016160606.png", "123_Crash_baidumapsdk.demo222_MA01_20151016160606.png");
+		// ReadFromFile readFromFile = new ReadFromFile();
+		// readFromFile.renameFile("E:\\3W_Apps\\temp\\oldtemp\\",
+		// "Crash_baidumapsdk.demo222_MA01_20151016160606.png",
+		// "123_Crash_baidumapsdk.demo222_MA01_20151016160606.png");
+		// readFromFile.
+		List<String> listName = new ArrayList<>();
+		readFromFile.readFile("E:\\temp.txt", listName);
+		CopyFile.copyNormal(Constant.serverApkPath127, "D:\\FailApp\\", listName);
 	}
 
 	/**
@@ -117,18 +124,18 @@ public class CopyFile {
 			try {
 				FileInputStream in;
 				try {
-					in = new java.io.FileInputStream("E:\\3W_Apps\\temp\\oldtemp\\" + strName);
+					in = new java.io.FileInputStream(serverPath + strName);
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
-				String newName = "";
-				if (strName.substring(0, strName.indexOf("Crash")).split("_").length == 2)
-					newName = (String) strName.subSequence(strName.indexOf("Crash"), strName.length());
-				else
-					newName = strName;
-				FileOutputStream out = new FileOutputStream("E:\\3W_Apps\\temp\\newtemp\\" + newName);
+//				String newName = "";
+//				if (strName.substring(0, strName.indexOf("Crash")).split("_").length == 2)
+//					newName = (String) strName.subSequence(strName.indexOf("Crash"), strName.length());
+//				else
+//					newName = strName;
+				FileOutputStream out = new FileOutputStream(failPath + strName);
 				byte[] bt = new byte[1024];
 				int count;
 				while ((count = in.read(bt)) > 0) {

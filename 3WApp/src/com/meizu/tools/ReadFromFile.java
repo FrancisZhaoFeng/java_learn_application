@@ -34,7 +34,8 @@ public class ReadFromFile {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					ApkName an = new ApkName();
-					an.setName(strName);
+					an.setfName(strName);
+					an.setName(strName.substring(strName.indexOf("_") + 1, strName.length() - 4));
 					if (strName.indexOf("_") != -1) {
 						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
 					} else {
@@ -268,7 +269,8 @@ public class ReadFromFile {
 					if (matcher.find())
 						indexNum = tempString.indexOf(matcher.group());
 					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {
-						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
+						// System.out.println(indexNum + "==" + index_ + ":" +
+						// tempString);
 						if (!patternLetter.matcher(tempString.substring(indexNum, index_)).find()) {
 							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
 							an.setName(tempString.substring(indexNum, tempString.length()));
@@ -461,7 +463,10 @@ public class ReadFromFile {
 				if (!strLine.contains("Crash") && !strLine.contains("版本号") && !strLine.contains("NotRespond")) {
 					int indexNum = 0, index_ = 0;
 					Pattern patternFristChar = Pattern.compile("[0-9]");// 找到第一个数字的下标
-					Pattern patternLetter = Pattern.compile("[A-Z]"); // 第一个数字的下标 到 第一个下划线的下标 之间不存在字母
+					Pattern patternLetter = Pattern.compile("[A-Z]"); // 第一个数字的下标
+																		// 到
+																		// 第一个下划线的下标
+																		// 之间不存在字母
 					Matcher matcher = patternFristChar.matcher(strLine);
 					if (matcher.find())
 						indexNum = strLine.indexOf(matcher.group());
@@ -624,7 +629,7 @@ public class ReadFromFile {
 			if (!oldfile.exists()) {
 				return;// 重命名文件不存在
 			}
-			if (newfile.exists())// 若在该目录下已经有一个文件和新文件名相同，则不允许重命名
+			if (newfile.exists()) // 若在该目录下已经有一个文件和新文件名相同，则不允许重命名
 				System.out.println(newname + "已经存在！");
 			else {
 				oldfile.renameTo(newfile);

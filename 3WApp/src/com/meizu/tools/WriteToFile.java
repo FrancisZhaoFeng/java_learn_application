@@ -184,7 +184,7 @@ public class WriteToFile {
 		try {
 			fosFail = new FileOutputStream(writePath);
 			for (ApkName an : apkNames) {
-				String apkPName = an.getfName() + "\r\n";
+				String apkPName = an.getSn() + "\t" + an.getName().replace(".apk", "") + "\r\n";
 				fosFail.write(apkPName.getBytes());
 			}
 			fosFail.flush();
@@ -202,7 +202,7 @@ public class WriteToFile {
 	public void serverFindInexid() {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		List<ApkName> inexitName = new ArrayList<ApkName>();
-		ReadFromFile.getApkList(Constant.serverApkPath127, apkName, "apk");
+		readFromFile.getApkList(Constant.serverPath, apkName, "apk");
 		int maxIndex = 0;
 		int[] lApk = new int[9999999];
 		for (ApkName an : apkName) {

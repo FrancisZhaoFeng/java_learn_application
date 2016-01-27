@@ -44,15 +44,17 @@ public class Constant {
 	public static final String localYesPath = "E:\\3W_Apps\\" + Tools.getYDate() + "\\fold_TextExcel\\txt_installSuccess.txt";
 
 	// apptest 127服务器路径
-	// public static final String server = "D:\\";
-	public static final String server = "\\\\172.16.11.127\\";
+	public static final String server = "D:\\";
+	// public static final String server = "\\\\172.16.11.127\\";
 	// public static final String mobileVersion = "M85_20160118011047";
-	public static final String mobileVersion = "balabala";
+	public static final String mobileVersion = "M85_20160118011047";
+	// public static final String mobileVersion = "M80_20160118015021";
 	public static final String serverApkPath127 = server + "app\\";
 	public static final String serverMobileVersionPath127 = server + "3w_app报告\\" + mobileVersion + "\\";
 	public static final String serverFristPath127 = serverMobileVersionPath127 + "第一轮测试\\";
 	public static final String serverSecondPath127 = serverMobileVersionPath127 + "第二轮测试\\";
 	public static final String fold_finalTestReport = serverMobileVersionPath127 + "测试结果汇总\\";
+	public static final String fold_comFail = serverMobileVersionPath127 + "机型对比\\";
 	// apptest 文件夹第一轮
 	public static final String fold_sF_allFailApk = serverFristPath127 + "allFailApk\\";
 	public static final String fold_sF_openFailLog = serverFristPath127 + "openFailLog\\";
@@ -67,7 +69,8 @@ public class Constant {
 	public static final String fold_final_installFail = fold_finalTestReport + "installFail\\";
 	public static final String fold_final_openFail = fold_finalTestReport + "openFail\\";
 	public static final String fold_final_crashFail = fold_finalTestReport + "crashFail\\";
-	public static final String fold_final_comFail = fold_finalTestReport + "对比机型\\";
+	public static final String fold_final_systemFailLog = fold_finalTestReport + "systemFailLog\\";
+	public static final String fold_final_others = fold_finalTestReport + "others\\";
 	// apptest 汇总 apk及log路劲
 	public static final String fold_final_installFailApk = fold_final_installFail + "installFailApk\\";
 	public static final String fold_final_installFailLog = fold_final_installFail + "installFailLog\\";

@@ -10,16 +10,16 @@ import contants.Constant;
 
 public class Tools {
 	public static void main(String[] args) {
-		// Tools.genServerFold();
-		Tools.genLocalFold();
+		Tools.genServerFold();
+		// Tools.genLocalFold();
 	}
 
 	public static String getDate() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		String date = df.format(new Date());
 		System.out.println(date);// new Date()为获取当前系统时间
-		return date;
-		// return "2016-01-20";
+		// return date;
+		return "2016-01-20";
 	}
 
 	public static String getYDate() {
@@ -48,6 +48,11 @@ public class Tools {
 	public static void genServerFold() {
 		// 版本中
 		Tools.generateFold(Constant.serverMobileVersionPath127);
+		// 主目录
+		Tools.generateFold(Constant.serverFristPath127);
+		Tools.generateFold(Constant.serverSecondPath127);
+		Tools.generateFold(Constant.fold_finalTestReport);
+		Tools.generateFold(Constant.fold_comFail);
 		// 第一轮
 		Tools.generateFold(Constant.fold_sF_allFailApk);
 		Tools.generateFold(Constant.fold_sF_installFailLog);
@@ -57,11 +62,13 @@ public class Tools {
 		Tools.generateFold(Constant.fold_sS_installFailLog);
 		Tools.generateFold(Constant.fold_sS_openFailLog);
 		Tools.generateFold(Constant.fold_sS_testReport);
+		Tools.generateFold(Constant.fold_sS_data);
 		// 汇总
 		Tools.generateFold(Constant.fold_final_installFail);
 		Tools.generateFold(Constant.fold_final_openFail);
 		Tools.generateFold(Constant.fold_final_crashFail);
-		Tools.generateFold(Constant.fold_final_comFail);
+		Tools.generateFold(Constant.fold_final_systemFailLog);
+		Tools.generateFold(Constant.fold_final_others);
 		// 汇总 apk及log
 		Tools.generateFold(Constant.fold_final_installFailApk);
 		Tools.generateFold(Constant.fold_final_installFailLog);

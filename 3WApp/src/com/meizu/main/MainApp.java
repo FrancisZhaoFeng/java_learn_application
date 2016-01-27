@@ -47,9 +47,9 @@ public class MainApp {
 			writeToFile.writeSecondRunApptest(Constant.txt_sS_crashFail, Constant.crashApkName);
 			// writeToFile.writeSecondRunApptest(Constant.txt_sS_analysisFail, Constant.analysisFApkName);
 			// 第二轮下载apk
-			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_installFailApk, Constant.installFApkName);
-			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_openFailApk, Constant.openFApkName);
-			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_crashFailApk, Constant.crashApkName);
+			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_installFailApk, Constant.installFApkName);
+			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_openFailApk, Constant.openFApkName);
+			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_crashFailApk, Constant.crashApkName);
 			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_analysisFail, Constant.analysisFApkName);
 			System.out.println("二轮报告生成完成");
 			break;

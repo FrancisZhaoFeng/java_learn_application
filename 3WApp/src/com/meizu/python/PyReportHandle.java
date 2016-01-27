@@ -150,15 +150,15 @@ public class PyReportHandle {
 	}
 
 	public static void main(String[] args) {
-		String readFileName = "m85_ioFail";
+		String readFileName = "flyme5_MA01F_HTCP";
 		PyReportHandle pyReportHandle = new PyReportHandle();
 		List<ReportInfo> pyReport = pyReportHandle.getPythonInfo(Constant.fold_TextExcel + readFileName);
-//		List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
+		// List<ReportInfo> excelReport = pyReportHandle.getExcelInfo();
 		// 生成报告
-		ExcelHandle.writePyExcel(pyReport, Constant.fold_TextExcel + readFileName + ".xls", 0);
-//		ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
-		pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
-				+ "flyme5_htc_report.xls");
+		// excelHandle.writePyExcel(pyReport, Constant.fold_TextExcel + readFileName + ".xls", 0);
+		// ExcelHandle.writePyExcel(excelReport, Constant.fold_TextExcel + "report2.xls", 1);
+		// pyReportHandle.genReport(Constant.fold_TextExcel + "flyme5_report.xls", Constant.fold_TextExcel + "flyme5_htc_lijie_e.xls", Constant.fold_TextExcel
+		// + "flyme5_htc_report.xls");
 
 	}
 }

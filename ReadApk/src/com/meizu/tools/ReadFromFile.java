@@ -3,15 +3,47 @@ package com.meizu.tools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.meizu.bean.ApkName;
 
 public class ReadFromFile {
+	public static void getApkList(String baseFilePath, List<ApkName> listApkFName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
+					ApkName an = new ApkName();
+					an.setName(strName);
+					an.setfName(strName);
+					if (strName.indexOf("_") != -1) {
+						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
+					} else {
+						an.setSn(0);
+					}
+					listApkFName.add(an);
+				}
+			}
+		}
+	}
 
 	public void getFileList(String baseFilePath, List<String> listName, String keyword) {
 		File file = new File(baseFilePath);
@@ -21,6 +53,54 @@ public class ReadFromFile {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					listName.add(strName);
+				}
+			}
+		}
+	}
+
+	public static void getFileListNormal(String baseFilePath, List<String> listName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
+					listName.add(strName);
+					// System.out.println(strName);
+				}
+			}
+		}
+	}
+
+	public void getFileListByPng(String baseFilePath, List<ApkName> listApkFName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			ApkName apkTemp = new ApkName();
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword)) {
+					ApkName an = new ApkName();
+					if (strName.indexOf("_") != -1) {
+						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
+					} else {
+						an.setSn(0);
+					}
+					boolean flag = false;
+					if (strName.contains("Crash_")) {
+						an.setName(an.getSn() + "_" + strName.subSequence(strName.indexOf("Crash_") + 6, strName.lastIndexOf("__2015")) + ".apk");
+					} else if (strName.contains("NotRespond_")) {
+						an.setName(an.getSn() + "_" + strName.subSequence(strName.indexOf("NotRespond_") + 11, strName.lastIndexOf("__2015")) + ".apk");
+					} else {
+						flag = true;
+					}
+					if (an.getName() != null && an.getName().equals(apkTemp.getName()))
+						continue;
+					System.out.println(an.getName());
+					if (!flag) {
+						listApkFName.add(an);
+						apkTemp = an;
+					}
 				}
 			}
 		}
@@ -115,6 +195,191 @@ public class ReadFromFile {
 
 		} catch (Exception e1) {
 			e1.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void genAppListFromCrashLog(String crashLogPath, List<ApkName> ApkInfos) {
+		String crash = "Crash_";
+		String notRespond = "NotRespond_";
+		String txt = ".txt";
+		String time = ", time=";
+		List<String> listCrashLog = new ArrayList<String>();
+		List<ApkName> listApkInfo = new ArrayList<ApkName>();
+		Set<String> setPackage = new HashSet<String>();
+		getFileListNormal(crashLogPath, listCrashLog, txt);
+		getApkList(Constant.serverApkPath127, listApkInfo, ".apk");
+		for (String strCrashLog : listCrashLog) {
+			if (strCrashLog.contains(crash)) {
+				strCrashLog = strCrashLog.split(crash)[1].split(txt)[0];
+			} else if (strCrashLog.contains(notRespond)) {
+				if (strCrashLog.contains(time)) {
+					strCrashLog = strCrashLog.split(notRespond)[1].split(time)[0];
+				} else {
+					strCrashLog = strCrashLog.split(notRespond)[1].split(txt)[0];
+				}
+			}
+			if (!strCrashLog.contains(txt) && !strCrashLog.contains("(")) {
+				setPackage.add(strCrashLog);
+			}
+		}
+		Map<String, ApkName> mapApkInfo = new HashMap<String, ApkName>();
+		for (ApkName ApkInfo : listApkInfo) {
+			mapApkInfo.put(ApkInfo.getName().toLowerCase(), ApkInfo);
+		}
+		System.out.println("genAppListFromCrashLog set size:" + setPackage.size());
+		for (Iterator iterator = setPackage.iterator(); iterator.hasNext();) {
+			String strPackage = (String) iterator.next();
+			ApkName ApkInfo = mapApkInfo.get(strPackage.toLowerCase());
+			if (ApkInfo != null)
+				ApkInfos.add(ApkInfo);
+		}
+		System.out.println("genAppListFromCrashLog list size:" + ApkInfos.size());
+	}
+
+	/**
+	 * 以行为单位读取文件，常用于读面向行的格式化文件
+	 */
+	public void genAppListFromTxt(String fileName, List<ApkName> ApkInfo) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			System.out.println("以行为单位读取文件内容，一次读一整行：" + fileName);
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+
+			// 一次读入一行，直到读入null为文件结束
+			while ((tempString = reader.readLine()) != null) {
+				ApkName an = new ApkName();
+				// 显示行号
+				if (!tempString.contains("Crash") && !tempString.contains("版本号") && !tempString.contains("NotRespond")) {
+					int indexNum = 0, index_ = 0;
+					Pattern patternFristChar = Pattern.compile("[0-9]");
+					Pattern patternLetter = Pattern.compile("[A-Z]");
+					Matcher matcher = patternFristChar.matcher(tempString);
+					if (matcher.find())
+						indexNum = tempString.indexOf(matcher.group());
+					if (indexNum != -1 && (index_ = tempString.indexOf("_")) != -1 && (indexNum < index_)) {
+						// System.out.println(indexNum + "==" + index_ + ":" + tempString);
+						if (!patternLetter.matcher(tempString.substring(indexNum, index_)).find()) {
+							an.setSn(Integer.parseInt(tempString.substring(indexNum, index_)));
+							an.setName(tempString.substring(indexNum, tempString.length()));
+							ApkInfo.add(an);
+						}
+					}
+
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	public void genAppListFromHtml(String fileName, List<ApkName> ApkInfos) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String strTemp = null;
+			// 一次读入一行，直到读入null为文件结束
+			while ((strTemp = reader.readLine()) != null) {
+				ApkName an = new ApkName();
+				// 显示行号
+				if (strTemp.contains("Install Test Failed")) {
+					continue;
+				} else if (strTemp.contains("Open Test Failed")) {
+					continue;
+				}
+				Pattern pattern = Pattern.compile("\\d{1,5}_.*.apk");
+				Matcher matcher = pattern.matcher(strTemp);
+				if (matcher.find()) {
+					String fName = matcher.group();
+					an.setSn(Integer.valueOf(fName.split("_")[0]));
+					an.setName(fName.substring(fName.indexOf("_") + 1));
+					an.setfName(fName);
+					ApkInfos.add(an);
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+
+	/*
+	 * 将安装和打开失败的log文件 转化为ApkInfo
+	 */
+	public void genAppListFromFolder(String failApkPath, List<ApkName> ApkInfos) {
+		List<String> listApkInfoFail = new ArrayList<String>();
+		getFileListNormal(failApkPath, listApkInfoFail, "txt");
+		for (String strFail : listApkInfoFail) {
+			ApkName an = new ApkName();
+			strFail = strFail.replace(".txt", ".apk");
+			an.setSn(Integer.valueOf(strFail.split("_")[0]));
+			an.setName(strFail.substring(strFail.indexOf("_") + 1));
+			an.setfName(strFail);
+			ApkInfos.add(an);
+		}
+		Collections.sort(ApkInfos);
+	}
+
+	/**
+	 * 以行为单位读取文件，常用于读面向行的格式化文件
+	 */
+	public void readAppTest(String fileName, List<ApkName> ApkInfo) {
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		try {
+			System.out.println("以行为单位读取文件内容，一次读一整行：" + fileName);
+			reader = new BufferedReader(new FileReader(file));
+			String strLine = null;
+
+			// 一次读入一行，直到读入null为文件结束
+			while ((strLine = reader.readLine()) != null) {
+				ApkName an = new ApkName();
+				// 显示行号
+				if (!strLine.contains("Crash") && !strLine.contains("版本号") && !strLine.contains("NotRespond")) {
+					int indexNum = 0, index_ = 0;
+					Pattern patternFristChar = Pattern.compile("[0-9]");// 找到第一个数字的下标
+					Pattern patternLetter = Pattern.compile("[A-Z]"); // 第一个数字的下标 到 第一个下划线的下标 之间不存在字母
+					Matcher matcher = patternFristChar.matcher(strLine);
+					if (matcher.find())
+						indexNum = strLine.indexOf(matcher.group());
+					if (indexNum != -1 && (index_ = strLine.indexOf("_")) != -1 && (indexNum < index_)) {
+						if (!patternLetter.matcher(strLine.substring(indexNum, index_)).find()) {
+							an.setSn(Integer.parseInt(strLine.substring(indexNum, index_)));
+							an.setName(strLine.substring(indexNum, strLine.length()));
+							ApkInfo.add(an);
+						}
+					}
+
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} finally {
 			if (reader != null) {
 				try {
@@ -224,6 +489,21 @@ public class ReadFromFile {
 		try {
 			System.out.println("当前字节输入流中的字节数为:" + in.available());
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeFileByLines(String writeFile, List<ApkName> ApkInfo) {
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(writeFile);
+			for (ApkName an : ApkInfo) {
+				fos.write((an.getName() + "\r\n").getBytes());
+			}
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
