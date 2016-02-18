@@ -74,6 +74,18 @@ public class ApkUtil {
 		return flag;
 	}
 
+	public boolean apkUsableTwo(String apkPath) {
+		Document document = null;
+		SAXBuilder builder = new SAXBuilder();
+		try {
+			document = builder.build(getXmlInputStream(apkPath));
+		} catch (Exception e) {
+			e.printStackTrace();
+			// return null;
+		}
+		return document == null ? true : false;
+	}
+
 	private InputStream getXmlInputStream(String apkPath) {
 		InputStream inputStream = null;
 		InputStream xmlInputStream = null;
@@ -96,5 +108,28 @@ public class ApkUtil {
 		}
 		return xmlInputStream;
 	}
+	//
+	// private boolean getXmlInputStreamg(String apkPath) {
+	// InputStream inputStream = null;
+	// InputStream xmlInputStream = null;
+	// ZipFile zipFile = null;
+	// try {
+	// zipFile = new ZipFile(apkPath);
+	// ZipEntry zipEntry = new ZipEntry("AndroidManifest.xml");
+	// inputStream = zipFile.getInputStream(zipEntry);
+	// AXMLPrinter xmlPrinter = new AXMLPrinter();
+	// xmlPrinter.startPrinf(inputStream);
+	// xmlInputStream = new ByteArrayInputStream(xmlPrinter.getBuf().toString().getBytes("UTF-8"));
+	// } catch (IOException e) {
+	// // e.printStackTrace();
+	// try {
+	// inputStream.close();
+	// zipFile.close();
+	// } catch (IOException e1) {
+	// // e1.printStackTrace();
+	// }
+	// }
+	// return xmlInputStream == null ? true : false;
+	// }
 
 }

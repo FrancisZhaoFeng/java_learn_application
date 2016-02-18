@@ -33,7 +33,7 @@ public class Constant {
 	public static final String excel_downloadFail = fold_TextExcel + "excel_downloadFail.xls";
 	public static final String excel_analysisFail = fold_TextExcel + "excel_analysisFail.xls";
 	public static final String excel_inexitApk = fold_TextExcel + "excel_inexitApk.xls";
-	public static final String excel_topapps = "E:\\3W_Apps\\top30000.xls";
+	public static final String excel_topapps = "E:\\3W_Apps\\top3w+.xls";
 	// 二轮测试
 	public static final String fold_srMeizuAutoTest = fold_secondRun + "fold_srMeizuAutoTest\\";
 	public static final String txt_srPackageError = fold_secondRun + "txt_srPackageError.txt";

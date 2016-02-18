@@ -15,9 +15,9 @@ public class Main {
 	public static void main(String args[]) {
 		ReadFromFile readFromFile = new ReadFromFile();
 		ApkUtil apkUtil = new ApkUtil();
-		// String apkPath = "C:\\Users\\zhaoguofeng\\Desktop\\bad apk\\analysis\\";
+		String apkPath = "C:\\Users\\zhaoguofeng\\Desktop\\解析失败\\";
 		// String apkPath = "\\\\172.16.11.127\\解析失败\\";
-		String apkPath = "\\\\172.16.11.127\\FailApp\\";
+		// String apkPath = "\\\\172.16.11.127\\FailApp\\";
 		// String apkPath = Constant.serverApkPath127;
 
 		List<ApkName> listApkNames = new ArrayList<ApkName>();
@@ -25,11 +25,13 @@ public class Main {
 		Collections.sort(listApkNames);
 		int num = 0;
 		for (ApkName apkName : listApkNames) {
-			if (!apkUtil.apkUsable(apkPath + apkName.getfName())) {
-				System.out.println(apkName.getfName());
-				// Main.deleteFile(apkPath + apkName.getfName());
-				num++;
-			}
+			System.out.println(apkName.getfName() + ",====," + apkUtil.getApkInfo(apkPath + apkName.getfName()).toString());
+			System.out.println();
+			// if (apkUtil.getApkInfo(apkPath + apkName.getfName()).getVersionCode() == null) {// !apkUtil.apkUsable(apkPath + apkName.getfName())
+			// System.out.println(apkName.getfName());
+			// // Main.deleteFile(apkPath + apkName.getfName());
+			// num++;
+			// }
 		}
 		System.out.println("finish~~~~,error size:" + num);
 	}
