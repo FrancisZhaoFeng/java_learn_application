@@ -12,9 +12,8 @@ import com.meizu.bean.ApkName;
 import contants.Constant;
 
 public class WriteToFile {
-	ReadFromFile readFromFile = new ReadFromFile();
-	static WriteToFile writeToFile = new WriteToFile();
-	static ExcelHandle excelHandle = new ExcelHandle();
+//	static WriteToFile writeToFile = new WriteToFile();
+//	static ExcelHandle excelHandle = new ExcelHandle();
 
 	/**
 	 * @param apkName
@@ -23,9 +22,9 @@ public class WriteToFile {
 	 */
 	public String writeRun(List<ApkName> apkName, int num) {
 		if (num == 1)
-			return writeToFile.writeFristRun(apkName);
+			return WriteToFile.writeFristRun(apkName);
 		else
-			return writeToFile.writeSecondRun(apkName);
+			return WriteToFile.writeSecondRun(apkName);
 	}
 
 	/**
@@ -33,14 +32,14 @@ public class WriteToFile {
 	 * @return 第一次报告统计，生成txt文件数为5及过滤关键词：安装打开成功（不包含：AppTestCase），安装失败(APK安装失败)，打开失败(打开失败)，下载失败()，服务器不存在的apk
 	 */
 	@SuppressWarnings("resource")
-	public String writeFristRun(List<ApkName> apkName) {
+	public static String writeFristRun(List<ApkName> apkName) {
 		FileOutputStream fosInstallSussess = null, fosInstallFail = null, fosOpenFail = null, fosDownloadFail = null, fosInexitApk = null;
 		int[] apkSize = new int[99999999];
 		int maxIndex = 0, minIndex = 99999999;
 		// 定义list：服务器文件名；下载失败文件名；
 		List<ApkName> lServerApkName = new ArrayList<ApkName>();
 		List<ApkName> downloadFailName = new ArrayList<ApkName>();
-		readFromFile.getApkList(Constant.serverPath, lServerApkName, ".apk");
+		ReadFromFile.getApkList(Constant.serverPath, lServerApkName, ".apk");
 		Collections.sort(lServerApkName);
 		try {
 			fosInstallSussess = new FileOutputStream(Constant.txt_installSuccess);
@@ -72,7 +71,7 @@ public class WriteToFile {
 			}
 			System.out.println("此次测试最小值：" + minIndex + "\n此次测试最大值：" + maxIndex);
 			if (new File(Constant.localYesPath).exists())
-				minIndex = readFromFile.readFileGetMin(Constant.localYesPath);
+				minIndex = ReadFromFile.readFileGetMin(Constant.localYesPath);
 			System.out.println("昨天最大值为：" + minIndex + "\n共：" + (maxIndex - minIndex));
 			// 将下载失败的与服务器上的apk对比，并已apk名称形式保存
 			for (int i = minIndex + 1; i <= maxIndex; i++) {
@@ -117,14 +116,14 @@ public class WriteToFile {
 	 * @param apkName
 	 * @return 第一次报告统计，生成txt文件数为3及过滤关键词：安装包解析错误（解析错误），安装失败(APK安装失败)，打开失败(打开失败)
 	 */
-	public String writeSecondRun(List<ApkName> apkName) {
+	public static String writeSecondRun(List<ApkName> apkName) {
 		FileOutputStream fosPackageError;
 		FileOutputStream fosInstallFail;
 		FileOutputStream fosOpenFail;
 		int maxIndex = 0, minIndex = 99999999;
 		// 定义list：服务器文件名；下载失败文件名；
 		List<ApkName> lFileName = new ArrayList<ApkName>();
-		readFromFile.getApkList(Constant.serverPath, lFileName, ".apk");
+		ReadFromFile.getApkList(Constant.serverPath, lFileName, ".apk");
 		try {
 			fosPackageError = new FileOutputStream(Constant.txt_srPackageError);
 			fosInstallFail = new FileOutputStream(Constant.txt_srInstallFail);
@@ -179,12 +178,12 @@ public class WriteToFile {
 		return "" + minIndex + "_" + maxIndex;
 	}
 
-	public void writeSecondRunApptest(String writePath, List<ApkName> apkNames) {
+	public static void writeSecondRunApptest(String writePath, List<ApkName> apkNames) {
 		FileOutputStream fosFail;
 		try {
 			fosFail = new FileOutputStream(writePath);
 			for (ApkName an : apkNames) {
-				String apkPName = an.getSn() + "\t" + an.getName().replace(".apk", "") + "\r\n";
+				String apkPName = an.getSn() + "\t" + an.getName().replace(".apk", "") + "\t" + an.getCrash() + "\r\n";
 				fosFail.write(apkPName.getBytes());
 			}
 			fosFail.flush();
@@ -199,10 +198,10 @@ public class WriteToFile {
 	/**
 	 * 服务器找到不存在的apk
 	 */
-	public void serverFindInexid() {
+	public static void serverFindInexid() {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		List<ApkName> inexitName = new ArrayList<ApkName>();
-		readFromFile.getApkList(Constant.serverPath, apkName, "apk");
+		ReadFromFile.getApkList(Constant.serverPath, apkName, "apk");
 		int maxIndex = 0;
 		int[] lApk = new int[9999999];
 		for (ApkName an : apkName) {
@@ -217,12 +216,12 @@ public class WriteToFile {
 				inexitName.add(an);
 			}
 		}
-		readFromFile.writeFileByLines(Constant.fold_TextExcel + "serverFindInexid.txt", inexitName);
+		ReadFromFile.writeFileByLines(Constant.fold_TextExcel + "serverFindInexid.txt", inexitName);
 		System.out.print("已获取服务器不存在的id：" + Constant.fold_TextExcel + "serverFindInexid.txt");
 	}
 
 	public static void main(String[] args) {
-		writeToFile.serverFindInexid();
-		excelHandle.snFindID(Constant.excel_topapps, "d:\\temp.txt", 1);
+		WriteToFile.serverFindInexid();
+		ExcelHandle.snFindID(Constant.excel_topapps, "d:\\temp.txt", 1);
 	}
 }

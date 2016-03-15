@@ -393,7 +393,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public boolean readFile(String fileName, List<String> files) {
+	public static boolean readFile(String fileName, List<String> files) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {

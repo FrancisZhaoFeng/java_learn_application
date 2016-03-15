@@ -7,6 +7,7 @@ public class ApkName implements Comparable<ApkName> {
 	private Integer sn = 0;
 	private String name = "";
 	private String fName = "";
+	private String crash = "";
 
 	public ApkName() {
 
@@ -16,6 +17,14 @@ public class ApkName implements Comparable<ApkName> {
 		this.sn = Integer.valueOf(fName.split("_")[0]);
 		this.name = fName.substring(fName.indexOf("_") + 1);
 		this.fName = fName;
+	}
+
+	public String getCrash() {
+		return crash;
+	}
+
+	public void setCrash(String crash) {
+		this.crash = crash;
 	}
 
 	public Integer getSn() {

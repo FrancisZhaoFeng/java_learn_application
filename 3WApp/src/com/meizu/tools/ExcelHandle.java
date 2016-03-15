@@ -43,7 +43,7 @@ public class ExcelHandle {
 	 * @param sheetNum
 	 * @return 读取excel文件
 	 */
-	public Sheet readExcel(String readExcel, int sheetNum) {
+	public static Sheet readExcel(String readExcel, int sheetNum) {
 		Sheet sheet = null;
 		try {
 			InputStream is = new FileInputStream(readExcel);
@@ -185,10 +185,10 @@ public class ExcelHandle {
 	 * @param readFile
 	 *            通过apk编号，在top排行榜excel表中找到需要的信息 1.pid+编号+包名 ，用于下载apk 2.应用名称（中文名）+包名，用于报告统计 3.编号+包名，用于生产apk名字
 	 */
-	public void snFindID(String readExcel, String readFile, int type) {
+	public static void snFindID(String readExcel, String readFile, int type) {
 		List<ApkName> apkName = new ArrayList<ApkName>();
 		Sheet sheet = excelHandle.readExcel(readExcel, 0);
-		readFromFile.readAppTest(readFile, apkName);
+		ReadFromFile.readAppTest(readFile, apkName);
 		String typeName = "";
 		for (ApkName an : apkName) {
 			Cell[] cell = sheet.getRow(an.getSn() - 1);
@@ -206,7 +206,7 @@ public class ExcelHandle {
 			}
 			System.out.println(typeName);
 		}
-		readFromFile.writeFileByLines("E:\\temp.txt", apkName);
+		ReadFromFile.writeFileByLines("E:\\temp.txt", apkName);
 	}
 
 	/**
@@ -480,6 +480,7 @@ public class ExcelHandle {
 		// excelHandle.packageFindApkName(Constant.serverPath, "E:\\3W_Apps\\2015-08-28\\fold_TextExcel\\3wflyme4.xls");
 		// excelHandle.nameFindPackage(Constant.excel_topapps, Constant.fold_TextExcel + "flyme5_iof.xls", 3);
 		excelHandle.genExecl(Constant.excel_topapps, Constant.excel_inexitApk, Constant.txt_inexitApk);
+		
 	}
 
 }

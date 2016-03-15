@@ -10,8 +10,10 @@ import contants.Constant;
 
 public class Tools {
 	public static void main(String[] args) {
-		// Tools.genServerFold();
-		Tools.genLocalFold();
+		Tools tools = new Tools();
+		System.out.println("命令执行例子：java -classpath 3w_app.jar com.meizu.tools.Tools M85_20160118011047");
+		Constant.changeMobileVersion(args[0]);
+		tools.genServerFold();
 	}
 
 	public static String getDate() {
@@ -19,7 +21,6 @@ public class Tools {
 		String date = df.format(new Date());
 		System.out.println(date);// new Date()为获取当前系统时间
 		return date;
-		// return "2016-01-20";
 	}
 
 	public static String getYDate() {
@@ -45,7 +46,7 @@ public class Tools {
 		Tools.generateFold(Constant.fold_srMeizuAutoTest);
 	}
 
-	public static void genServerFold() {
+	public void genServerFold() {
 		// 版本中
 		Tools.generateFold(Constant.serverMobileVersionPath127);
 		// 主目录
@@ -64,18 +65,21 @@ public class Tools {
 		Tools.generateFold(Constant.fold_sS_testReport);
 		Tools.generateFold(Constant.fold_sS_data);
 		// 汇总
-		Tools.generateFold(Constant.fold_final_installFail);
-		Tools.generateFold(Constant.fold_final_openFail);
-		Tools.generateFold(Constant.fold_final_crashFail);
-		Tools.generateFold(Constant.fold_final_systemFailLog);
+		Tools.generateFold(Constant.fold_final_failLog);
+		Tools.generateFold(Constant.fold_final_failApk);
 		Tools.generateFold(Constant.fold_final_others);
-		// 汇总 apk及log
-		Tools.generateFold(Constant.fold_final_installFailApk);
-		Tools.generateFold(Constant.fold_final_installFailLog);
-		Tools.generateFold(Constant.fold_final_openFailApk);
-		Tools.generateFold(Constant.fold_final_openFailLog);
-		Tools.generateFold(Constant.fold_final_crashFailApk);
-		Tools.generateFold(Constant.fold_final_crashFailLog);
+		// 汇总 apk
+		Tools.generateFold(Constant.fold_final_a_installFailApk);
+		Tools.generateFold(Constant.fold_final_a_openFailApk);
+		Tools.generateFold(Constant.fold_final_a_crashFailApk);
+		Tools.generateFold(Constant.fold_final_l_systemFail);
+		// 汇总 log
+		Tools.generateFold(Constant.fold_final_l_installFailLog);
+		Tools.generateFold(Constant.fold_final_l_installFailComLog);
+		Tools.generateFold(Constant.fold_final_l_openFailLog);
+		Tools.generateFold(Constant.fold_final_l_openFailComLog);
+		Tools.generateFold(Constant.fold_final_l_crashFailLog);
+		Tools.generateFold(Constant.fold_final_l_crashFailComLog);
 		System.out.println("生成文件夹成功");
 	}
 

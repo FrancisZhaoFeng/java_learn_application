@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.meizu.bean.ApkName;
 import com.meizu.tools.CopyFile;
-import com.meizu.tools.ExcelHandle;
 import com.meizu.tools.ReadFromFile;
 import com.meizu.tools.WriteToFile;
 
@@ -14,43 +13,45 @@ import contants.Constant;
 
 public class MainApp {
 	private static String installFailPath = "", openFailPath = "", testReport = "";
-	private static ReadFromFile readFromFile = new ReadFromFile();
-	private static WriteToFile writeToFile = new WriteToFile();
-	private static CopyFile copyFile = new CopyFile();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		int num = 2;// 代表1轮测试，还是2轮测试
+		System.out.println("命令执行例子：java -classpath 3w_app.jar com.meizu.main.MainApp M85_20160118011047 1 [apk path(default:d:\\app)]");
+		Constant.changeMobileVersion(args[0]);
+		int num = Integer.parseInt(args[1]);// 代表1轮测试，还是2轮测试
+		if (args.length == 3) {
+			Constant.serverApkPath127 = args[2];
+		}
 		init(num);
 
 		MainApp.genListFormHtml(testReport, Constant.analysisFApkName);// 读取Html报告，生成 解析失败list
 		// 根据服务器的安装和打开失败文件夹的log 获取安装和打开失败的apk名字
-		readFromFile.genAppListFromFolder(installFailPath, Constant.installFApkName);
-		readFromFile.genAppListFromFolder(openFailPath, Constant.openFApkName);
+		ReadFromFile.genAppListFromFolder(installFailPath, Constant.installFApkName);
+		ReadFromFile.genAppListFromFolder(openFailPath, Constant.openFApkName);
 		Collections.sort(Constant.allApkName);
 
-		System.out.println("installFailSize:" + Constant.installFApkName.size() + ",\t第一个apk：" + Constant.installFApkName.get(0));
-		System.out.println("openFailSize:" + Constant.openFApkName.size() + ",\t第一个apk：" + Constant.openFApkName.get(0));
-		// System.out.println("analysisFailSize:" + Constant.analysisFApkName.size() + ",\t第一个apk：" + Constant.analysisFApkName.get(0));
-		System.out.println("allSize:" + Constant.allApkName.size() + ",\t第一个apk：" + Constant.allApkName.get(0));
+		System.out.println("installFailSize:" + Constant.installFApkName.size());
+		System.out.println("openFailSize:" + Constant.openFApkName.size());
+		System.out.println("analysisFailSize:" + Constant.analysisFApkName.size());
+		System.out.println("allSize:" + Constant.allApkName.size());
 
 		switch (num) {
 		case 1:
-			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_sF_allFailApk, Constant.allApkName);
-			System.out.println("一轮报告生成完成");
+			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_sF_allFailApk, Constant.allApkName, false);
+			System.out.println(Constant.analysisFApkName);
+			System.out.println("一轮报告生成完成,copy apk 完成");
 			break;
 		case 2:
-			readFromFile.genAppListFromCrashLog(Constant.fold_final_crashFailLog, Constant.crashApkName);
+			ReadFromFile.genAppListFromCrashLog(Constant.fold_final_l_crashFailLog, Constant.crashApkName);
 			// 第二轮写入txt
-			writeToFile.writeSecondRunApptest(Constant.txt_sS_installFail, Constant.installFApkName);
-			writeToFile.writeSecondRunApptest(Constant.txt_sS_openFail, Constant.openFApkName);
-			writeToFile.writeSecondRunApptest(Constant.txt_sS_crashFail, Constant.crashApkName);
-			// writeToFile.writeSecondRunApptest(Constant.txt_sS_analysisFail, Constant.analysisFApkName);
+			WriteToFile.writeSecondRunApptest(Constant.txt_sS_installFail, Constant.installFApkName);
+			WriteToFile.writeSecondRunApptest(Constant.txt_sS_openFail, Constant.openFApkName);
+			WriteToFile.writeSecondRunApptest(Constant.txt_sS_crashFail, Constant.crashApkName);
+			WriteToFile.writeSecondRunApptest(Constant.txt_sS_analysisFail, Constant.analysisFApkName);
 			// 第二轮下载apk
-			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_installFailApk, Constant.installFApkName);
-			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_openFailApk, Constant.openFApkName);
-			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_crashFailApk, Constant.crashApkName);
-			// CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_analysisFail, Constant.analysisFApkName);
+			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_a_installFailApk, Constant.installFApkName, false);
+			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_a_openFailApk, Constant.openFApkName, false);
+			CopyFile.copyApk(Constant.serverApkPath127, Constant.fold_final_a_crashFailApk, Constant.crashApkName, false);
 			System.out.println("二轮报告生成完成");
 			break;
 		case 3:
@@ -91,7 +92,7 @@ public class MainApp {
 				System.out.println(apkName.toString());
 			}
 		}
-		CopyFile.copyApk(Constant.serverApkPath127, endPath, residueApk);
+		CopyFile.copyApk(Constant.serverApkPath127, endPath, residueApk, false);
 	}
 
 	public static void genListFormHtml(String testReport, List<ApkName> apkNames) {
@@ -100,7 +101,7 @@ public class MainApp {
 		ReadFromFile.getFileListNormal(testReport, lFileNames, ".html");
 		System.out.println("TestReport.html 报告个数：" + lFileNames.size());
 		for (String strFileName : lFileNames)
-			readFromFile.genAppListFromHtml(testReport + strFileName, apkNames);
+			ReadFromFile.genAppListFromHtml(testReport + strFileName, apkNames);
 		Collections.sort(apkNames);
 		Constant.allApkName.addAll(apkNames);
 	}

@@ -47,6 +47,27 @@ public class ReadFromFile {
 		}
 	}
 
+	public static void getApkListVersion(String baseFilePath, List<ApkName> listApkFName, String keyword) {
+		File file = new File(baseFilePath);
+		File[] filesName = file.listFiles();
+		if (filesName != null && file.exists()) {
+			for (File fileName : filesName) {
+				String strName = fileName.getName().toString();
+				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
+					ApkName an = new ApkName();
+					an.setfName(strName);
+					an.setName(strName.substring(strName.indexOf("_") + 1, strName.lastIndexOf("_v")));
+					if (strName.indexOf("_") != -1) {
+						an.setSn(Integer.parseInt(strName.substring(0, strName.indexOf("_"))));
+					} else {
+						an.setSn(0);
+					}
+					listApkFName.add(an);
+				}
+			}
+		}
+	}
+
 	public void getFileList(String baseFilePath, List<String> listName, String keyword) {
 		File file = new File(baseFilePath);
 		File[] filesName = file.listFiles();
@@ -207,43 +228,50 @@ public class ReadFromFile {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void genAppListFromCrashLog(String crashLogPath, List<ApkName> apkNames) {
+	public static void genAppListFromCrashLog(String crashLogPath, List<ApkName> apkNames) {
 		String crash = "Crash_";
 		String notRespond = "NotRespond_";
-		String txt = ".txt";
 		String time = ", time=";
 		List<String> listCrashLog = new ArrayList<String>();
 		List<ApkName> listApkName = new ArrayList<ApkName>();
 		Set<String> setPackage = new HashSet<String>();
-		getFileListNormal(crashLogPath, listCrashLog, txt);
-		getApkList(Constant.serverApkPath127, listApkName, ".apk");
+		Map<String, String> mapCrashRecord = new HashMap<>();
+		getFileListNormal(crashLogPath, listCrashLog, "*");
+		getApkListVersion(Constant.serverApkPath127, listApkName, ".apk");
 		for (String strCrashLog : listCrashLog) {
+			String crashR = "";
 			if (strCrashLog.contains(crash)) {
-				strCrashLog = strCrashLog.split(crash)[1].split(txt)[0];
+				strCrashLog = strCrashLog.split(crash)[1].split("\\.txt")[0];
+				crashR = "Crash";
 			} else if (strCrashLog.contains(notRespond)) {
 				if (strCrashLog.contains(time)) {
 					strCrashLog = strCrashLog.split(notRespond)[1].split(time)[0];
 				} else {
-					strCrashLog = strCrashLog.split(notRespond)[1].split(txt)[0];
+					strCrashLog = strCrashLog.split(notRespond)[1].split("\\.txt")[0];
 				}
+				crashR = "NotRespond";
 			}
-			if (!strCrashLog.contains(txt) && !strCrashLog.contains("(")) {
-				setPackage.add(strCrashLog);
+			if (!strCrashLog.contains(".txt") && !strCrashLog.contains("(")) {
+				strCrashLog = strCrashLog.replace(",", "");
+				setPackage.add(strCrashLog.toLowerCase());
+				mapCrashRecord.put(strCrashLog.toLowerCase(), crashR);
 			}
 		}
 		Map<String, ApkName> mapApkName = new HashMap<String, ApkName>();
 		for (ApkName apkName : listApkName) {
 			mapApkName.put(apkName.getName().toLowerCase(), apkName);
 		}
-		System.out.println("genAppListFromCrashLog set size:" + setPackage.size());
+		// System.out.println("genAppListFromCrashLog set size:" + setPackage.size());
 		for (Iterator iterator = setPackage.iterator(); iterator.hasNext();) {
 			String strPackage = (String) iterator.next();
 			ApkName apkname = mapApkName.get(strPackage.toLowerCase());
-			if (apkname != null)
+			if (apkname != null) {
+				apkname.setCrash(mapCrashRecord.get(strPackage));
 				apkNames.add(apkname);
+			}
 		}
 		System.out.println("genAppListFromCrashLog list size:" + apkNames.size());
+		Collections.sort(apkNames);
 	}
 
 	/**
@@ -352,7 +380,7 @@ public class ReadFromFile {
 		}
 	}
 
-	public void genAppListFromHtml(String fileName, List<ApkName> apkNames) {
+	public static void genAppListFromHtml(String fileName, List<ApkName> apkNames) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -363,9 +391,9 @@ public class ReadFromFile {
 				ApkName an = new ApkName();
 				// 显示行号
 				if (strTemp.contains("Install Test Failed")) {
-					continue;
+					return;
 				} else if (strTemp.contains("Open Test Failed")) {
-					continue;
+					return;
 				}
 				Pattern pattern = Pattern.compile("\\d{1,5}_.*.apk");
 				Matcher matcher = pattern.matcher(strTemp);
@@ -430,12 +458,12 @@ public class ReadFromFile {
 	/*
 	 * 将安装和打开失败的log文件 转化为ApkName
 	 */
-	public void genAppListFromFolder(String failApkPath, List<ApkName> apkNames) {
+	public static void genAppListFromFolder(String failApkPath, List<ApkName> apkNames) {
 		List<String> listapkNameFail = new ArrayList<String>();
 		getFileListNormal(failApkPath, listapkNameFail, "txt");
 		for (String strFail : listapkNameFail) {
 			ApkName an = new ApkName();
-			strFail = strFail.replace(".txt", ".apk");
+			strFail = strFail.replace(".txt", "");
 			an.setSn(Integer.valueOf(strFail.split("_")[0]));
 			an.setName(strFail.substring(strFail.indexOf("_") + 1));
 			an.setfName(strFail);
@@ -448,7 +476,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public void readAppTest(String fileName, List<ApkName> apkName) {
+	public static void readAppTest(String fileName, List<ApkName> apkName) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -496,7 +524,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public boolean readFile(String fileName, List<String> files) {
+	public static boolean readFile(String fileName, List<String> files) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
@@ -524,7 +552,7 @@ public class ReadFromFile {
 	/**
 	 * 以行为单位读取文件，常用于读面向行的格式化文件
 	 */
-	public int readFileGetMin(String fileName) {
+	public static int readFileGetMin(String fileName) {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		int minValue = 0;
@@ -596,7 +624,7 @@ public class ReadFromFile {
 		}
 	}
 
-	public void writeFileByLines(String writeFile, List<ApkName> apkName) {
+	public static void writeFileByLines(String writeFile, List<ApkName> apkName) {
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(writeFile);
