@@ -89,7 +89,7 @@ public class ReadFromFile {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					listName.add(strName);
-					// System.out.println(strName);
+					 System.out.print("\""+strName.substring(0,strName.length()-4)+"\",");
 				}
 			}
 		}
