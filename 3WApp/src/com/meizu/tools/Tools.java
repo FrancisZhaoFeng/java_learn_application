@@ -12,7 +12,11 @@ public class Tools {
 	public static void main(String[] args) {
 		Tools tools = new Tools();
 		System.out.println("命令执行例子：java -classpath 3w_app.jar com.meizu.tools.Tools M85_20160118011047");
-		Constant.changeMobileVersion(args[0]);
+		if (args.length == 0) {
+			Constant.changeMobileVersion("M80_testversion");
+		} else {
+			Constant.changeMobileVersion(args[0]);
+		}
 		tools.genServerFold();
 	}
 

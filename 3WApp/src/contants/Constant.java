@@ -92,11 +92,11 @@ public class Constant {
 	}
 
 	// apptest 127服务器路径
-	public static final String server = "D:\\";
+	public static final String server = "\\\\mzfs\\研发中心\\公用文件夹\\第三方软件兼容性测试\\";
 	public static String mobileVersion = "meizu";
 	public static String serverApkPath127 = server + "app\\";
 	// 需要mobile
-	public static String serverMobileVersionPath127 = server + "3w_app报告\\" + mobileVersion + "\\";//
+	public static String serverMobileVersionPath127 = server + mobileVersion + "\\";//
 	public static String serverFristPath127 = serverMobileVersionPath127 + "第一轮测试\\";
 	public static String serverSecondPath127 = serverMobileVersionPath127 + "第二轮测试\\";
 	public static String fold_finalTestReport = serverMobileVersionPath127 + "测试结果汇总\\";

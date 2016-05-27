@@ -16,14 +16,18 @@ public class MainApp {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println("命令执行例子：java -classpath 3w_app.jar com.meizu.main.MainApp M85_20160118011047 1 [apk path(default:d:\\app)]");
+		System.out.println("命令执行例子：java -classpath 3w_app.jar com.meizu.main.MainApp M85_20160118011047 1 [apk path(default:d:\\app\\)]");
 		Constant.changeMobileVersion(args[0]);
 		int num = Integer.parseInt(args[1]);// 代表1轮测试，还是2轮测试
 		if (args.length == 3) {
 			Constant.serverApkPath127 = args[2];
 		}
-		init(num);
+		// 调试
+//		 Constant.changeMobileVersion("M86_20160406015109");
+//		 int num = 2;
+//		 Constant.serverApkPath127= "\\\\172.16.11.78\\2kapp\\2016-04-06\\";
 
+		init(num);
 		MainApp.genListFormHtml(testReport, Constant.analysisFApkName);// 读取Html报告，生成 解析失败list
 		// 根据服务器的安装和打开失败文件夹的log 获取安装和打开失败的apk名字
 		ReadFromFile.genAppListFromFolder(installFailPath, Constant.installFApkName);

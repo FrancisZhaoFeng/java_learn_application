@@ -89,7 +89,7 @@ public class ReadFromFile {
 				String strName = fileName.getName().toString();
 				if (strName.trim().endsWith(keyword) || keyword.contains("*")) {
 					listName.add(strName);
-					 System.out.print("\""+strName.substring(0,strName.length()-4)+"\",");
+					System.out.print("\"" + strName.substring(0, strName.length() - 4) + "\",");
 				}
 			}
 		}
@@ -251,6 +251,7 @@ public class ReadFromFile {
 				}
 				crashR = "NotRespond";
 			}
+			strCrashLog=strCrashLog.substring(0, strCrashLog.length()-13);
 			if (!strCrashLog.contains(".txt") && !strCrashLog.contains("(")) {
 				strCrashLog = strCrashLog.replace(",", "");
 				setPackage.add(strCrashLog.toLowerCase());
@@ -387,13 +388,17 @@ public class ReadFromFile {
 			reader = new BufferedReader(new FileReader(file));
 			String strTemp = null;
 			// 一次读入一行，直到读入null为文件结束
+			boolean flag = false;
 			while ((strTemp = reader.readLine()) != null) {
 				ApkName an = new ApkName();
 				// 显示行号
-				if (strTemp.contains("Install Test Failed")) {
-					return;
-				} else if (strTemp.contains("Open Test Failed")) {
-					return;
+				if (!strTemp.contains("analysisFail APK NAME") && !flag) {
+					continue;
+				} else {
+					flag = true;
+				}
+				if (flag && strTemp.contains("APK NAME")&& !strTemp.contains("analysisFail APK NAME")) {
+					break;
 				}
 				Pattern pattern = Pattern.compile("\\d{1,5}_.*.apk");
 				Matcher matcher = pattern.matcher(strTemp);
